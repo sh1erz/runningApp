@@ -15,6 +15,9 @@ ext {
     // Hilt
     hiltVersion = '2.44'
 
+    //Navigation
+    navVersion = "2.5.3"
+
     // Remote
     okhttp3Version = '4.9.3'
     gsonVersion = '2.9.0'
@@ -44,12 +47,20 @@ def dependencyGroup(Closure closure) {
     return closure
 }
 
-/******* Modules Dependencies *******/
+ext.modulesDependencies = dependencyGroup {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(":feature-main")
+}
 
 ext.presentationDependencies = dependencyGroup {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     implementation "com.google.dagger:hilt-android:$hiltVersion"
     kapt "com.google.dagger:hilt-compiler:$hiltVersion"
+
+    implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
 
     implementation "androidx.core:core-ktx:$androidxVersion"
     implementation 'androidx.appcompat:appcompat:1.6.0'

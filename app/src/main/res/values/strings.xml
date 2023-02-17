@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">RunningApp</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="splash">Splash</string>
+    <string name="social">Social</string>
+    <string name="training">Training</string>
+    <string name="personal">Personal</string>
 </resources>

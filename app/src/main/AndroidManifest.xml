@@ -10,6 +10,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RunningApp"
         tools:targetApi="31">
+        <activity
+            android:name=".NavHostActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
 
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
