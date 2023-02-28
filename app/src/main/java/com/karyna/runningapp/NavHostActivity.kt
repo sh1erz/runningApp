@@ -1,12 +1,12 @@
 package com.karyna.runningapp
 
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.karyna.runningapp.databinding.ActivityNavHostBinding
 
-class NavHostActivity : FragmentActivity() {
+class NavHostActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNavHostBinding
 

@@ -1,4 +1,4 @@
-package com.karyna.runningapp.utils
+package com.karyna.feature.core.utils
 
 import android.content.res.Resources
 import androidx.annotation.PluralsRes
@@ -9,7 +9,7 @@ object StringFormatter {
     private lateinit var resources: Resources
 
     fun setRes(resources: Resources) {
-        this.resources = resources
+        StringFormatter.resources = resources
     }
 
     fun from(@StringRes formatter: Int, vararg args: Any): String =
