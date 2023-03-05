@@ -5,9 +5,10 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.maps.model.LatLng
 import com.karyna.feature.core.utils.StringFormatter
 import com.karyna.feature.main.map.LocationProvider
-import com.karyna.feature.main.map.Ui
+import com.karyna.feature.main.map.RunInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.properties.Delegates
@@ -15,10 +16,10 @@ import kotlin.properties.Delegates
 @HiltViewModel
 class MapViewModel @Inject constructor() :
     ViewModel(), DefaultLifecycleObserver {
-    val ui = MutableLiveData(Ui.EMPTY)
+    val runInfo = MutableLiveData(RunInfo.EMPTY)
+    val currentLocation = MutableLiveData<LatLng?>(null)
 
     private var locationProvider by Delegates.notNull<LocationProvider>()
-    private var trackLocation = false
 
     fun init(activity: AppCompatActivity) {
         locationProvider = LocationProvider(activity)
@@ -26,17 +27,18 @@ class MapViewModel @Inject constructor() :
 
     override fun onStart(owner: LifecycleOwner) {
         super.onStart(owner)
-        val current = ui.value
-        locationProvider.liveLocations.observe(owner) { locations ->
-            ui.value = current?.copy(userPath = locations)
-        }
 
         locationProvider.liveLocation.observe(owner) { currentLocation ->
-            ui.value = current?.copy(currentLocation = currentLocation)
+            this.currentLocation.value = currentLocation
+        }
+
+        locationProvider.liveLocations.observe(owner) { locations ->
+            runInfo.value = runInfo.value?.copy(userPath = locations)
         }
 
         locationProvider.liveDistance.observe(owner) { distance ->
-            ui.value = current?.copy(formattedDistance = StringFormatter.from(R.string.distance_value, distance))
+            runInfo.value =
+                runInfo.value?.copy(formattedDistance = StringFormatter.from(R.string.distance_value, distance))
         }
     }
 
@@ -45,9 +47,8 @@ class MapViewModel @Inject constructor() :
         locationProvider.getUserLocation()
     }
 
-    fun toggleTrackingLocation() {
-        trackLocation = !trackLocation
-        if (trackLocation) {
+    fun trackLocation(enable: Boolean) {
+        if (enable) {
             locationProvider.trackUser()
         } else {
             locationProvider.stopTracking()

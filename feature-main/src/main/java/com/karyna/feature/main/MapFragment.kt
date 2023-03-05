@@ -15,9 +15,11 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.PolylineOptions
 import com.karyna.feature.main.databinding.FragmentMapBinding
 import com.karyna.feature.main.map.PermissionsManager
-import com.karyna.feature.main.map.Ui
+import com.karyna.feature.main.map.RunInfo
 import kotlin.properties.Delegates
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -48,41 +50,63 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         //setup map fragment
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-        with(viewModel) {
-            ui.observe(viewLifecycleOwner, ::updateUi)
-        }
     }
 
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
+     * This is where we can add markers or lines, add listeners or move the camera.
      */
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
         googleMap.uiSettings.isZoomControlsEnabled = true
         permissionsManager.requestUserLocation()
+        with(viewModel) {
+            currentLocation.observe(viewLifecycleOwner) {
+                if (it != null && it != googleMap.cameraPosition.target) {
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(it, MAP_ZOOM))
+                }
+            }
+            runInfo.observe(viewLifecycleOwner, ::updateRunInfo)
+        }
     }
 
     private fun setClickListeners() {
         with(binding) {
-            btnStart.setOnClickListener { viewModel.toggleTrackingLocation() }
+            btnStart.setOnClickListener {
+                val track: Boolean
+                val btnRes: Int
+                val startRes = R.string.start
+                if (btnStart.text == getString(startRes)) {
+                    track = true
+                    btnRes = R.string.pause
+                } else {
+                    track = false
+                    btnRes = R.string.start
+                }
+                viewModel.trackLocation(track)
+                btnStart.text = getString(btnRes)
+            }
         }
     }
 
-    private fun updateUi(ui: Ui) {
+    private fun updateRunInfo(runInfo: RunInfo) {
         with(binding) {
-            ui.currentLocation?.let {
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(it, 14f))
-            }
-            tvDistance.text = ui.formattedDistance
-            tvPace.text = ui.formattedPace
+            tvDistance.text = runInfo.formattedDistance
+            tvPace.text = runInfo.formattedPace
+            drawRoute(runInfo.userPath)
         }
+    }
+
+    private fun drawRoute(locations: List<LatLng>) {
+        val polylineOptions = PolylineOptions()
+
+        googleMap.clear()
+
+        val points = polylineOptions.points
+        points.addAll(locations)
+
+        googleMap.addPolyline(polylineOptions)
     }
 
     private fun checkPermission(googleMap: GoogleMap) {
@@ -96,5 +120,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
         //load location
         viewModel.getUserLocation()
+    }
+
+    private companion object {
+        const val MAP_ZOOM = 14f
     }
 }
