@@ -38,7 +38,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        requireActivity().lifecycle.addObserver(viewModel)
+        viewLifecycleOwner.lifecycle.addObserver(viewModel)
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -79,7 +79,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 val startRes = R.string.start
                 if (btnStart.text == getString(startRes)) {
                     track = true
-                    btnRes = R.string.pause
+                    btnRes = R.string.finish_run
                 } else {
                     track = false
                     btnRes = R.string.start

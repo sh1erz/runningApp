@@ -1,5 +1,5 @@
 <resources>
     <string name="distance_value">Distance: %d meters</string>
-    <string name="pause">Pause</string>
+    <string name="finish_run">Finish run</string>
     <string name="start">Start</string>
 </resources>

@@ -6,7 +6,7 @@
         android:title="@string/social" />
 
     <item
-        android:id="@id/mapFragment"
+        android:id="@id/map_nav_graph"
         android:icon="@drawable/ic_baseline_person_24"
         android:title="@string/training" />
 
