@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".services.RunningForegroundService" />
+        <service android:name="com.karyna.feature.main.services.RunningForegroundService" />
 
     </application>
 

@@ -1,9 +1,13 @@
 package com.karyna.feature.main
 
 import android.Manifest
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +24,7 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.karyna.feature.main.databinding.FragmentMapBinding
 import com.karyna.feature.main.map.PermissionsManager
 import com.karyna.feature.main.map.RunInfo
+import com.karyna.feature.main.services.RunningForegroundService
 import kotlin.properties.Delegates
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -29,6 +34,22 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private val viewModel: MapViewModel by viewModels()
     private var googleMap: GoogleMap by Delegates.notNull()
     private var permissionsManager by Delegates.notNull<PermissionsManager>()
+
+    private var runningService: RunningForegroundService? = null
+
+    /** Defines callbacks for service binding, passed to bindService()  */
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            (service as? RunningForegroundService.RunningBinder)?.let {
+                runningService = it.getService()
+            }
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            runningService = null
+        }
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -50,6 +71,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         //setup map fragment
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+//        bind service
+        val intent = Intent(requireContext(), RunningForegroundService::class.java).also { intent ->
+                    requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
+                }
+        requireActivity().startForegroundService(intent)
     }
 
     /**
