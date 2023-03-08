@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:elevation="10dp"
         android:text="Distance"
+        android:backgroundTint="@color/white"
         app:layout_constraintEnd_toStartOf="@+id/tvPace"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"

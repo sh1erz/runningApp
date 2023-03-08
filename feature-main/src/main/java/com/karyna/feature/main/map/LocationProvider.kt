@@ -52,7 +52,7 @@ class LocationProvider(private val activity: Activity) {
 
         val locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.fastestInterval = 1000
+        locationRequest.interval = 2000
         client.requestLocationUpdates(
             locationRequest, currentLocationCallback,
             Looper.getMainLooper()

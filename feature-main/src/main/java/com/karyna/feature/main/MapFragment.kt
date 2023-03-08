@@ -109,6 +109,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 } else {
                     track = false
                     btnRes = R.string.start
+                    googleMap.clear()
                 }
                 viewModel.trackLocation(track)
                 btnStart.text = getString(btnRes)
