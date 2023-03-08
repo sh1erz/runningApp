@@ -1,8 +1,11 @@
 package com.karyna.feature.main.map
 
+import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Looper
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -12,9 +15,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import kotlin.math.roundToInt
 
-class LocationProvider(private val activity: Activity) {
+class LocationProvider(private val context: Context) {
 
-    private val client by lazy { LocationServices.getFusedLocationProviderClient(activity) }
+    private val client by lazy { LocationServices.getFusedLocationProviderClient(context) }
 
     private val locations = mutableListOf<LatLng>()
     private var distance = 0
@@ -60,20 +63,29 @@ class LocationProvider(private val activity: Activity) {
     }
 
     @SuppressLint("MissingPermission")
-    fun trackUser() {
+    fun trackUserRun() {
         client.removeLocationUpdates(currentLocationCallback)
 
         val locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 500
-
         client.requestLocationUpdates(locationRequest, runLocationCallback, Looper.getMainLooper())
     }
 
     fun stopTracking() {
         locations.clear()
         distance = 0
-        getUserLocation()
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            client.removeLocationUpdates(currentLocationCallback)
+        }
     }
+
 
 }

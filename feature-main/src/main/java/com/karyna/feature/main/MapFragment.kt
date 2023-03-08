@@ -36,6 +36,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private var permissionsManager by Delegates.notNull<PermissionsManager>()
 
     private var runningService: RunningForegroundService? = null
+    private var isBound: Boolean = false
 
     /** Defines callbacks for service binding, passed to bindService()  */
     private val connection = object : ServiceConnection {
@@ -43,6 +44,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             (service as? RunningForegroundService.RunningBinder)?.let {
                 runningService = it.getService()
+                runningService?.runInfo?.observe(viewLifecycleOwner, ::updateRunInfo)
             }
         }
 
@@ -68,14 +70,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
 
         setClickListeners()
-        //setup map fragment
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
-//        bind service
-        val intent = Intent(requireContext(), RunningForegroundService::class.java).also { intent ->
-                    requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
-                }
-        requireActivity().startForegroundService(intent)
+        setupMap()
     }
 
     /**
@@ -93,28 +88,51 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(it, MAP_ZOOM))
                 }
             }
-            runInfo.observe(viewLifecycleOwner, ::updateRunInfo)
         }
     }
 
     private fun setClickListeners() {
         with(binding) {
-            btnStart.setOnClickListener {
-                val track: Boolean
-                val btnRes: Int
-                val startRes = R.string.start
-                if (btnStart.text == getString(startRes)) {
-                    track = true
-                    btnRes = R.string.finish_run
-                } else {
-                    track = false
-                    btnRes = R.string.start
-                    googleMap.clear()
-                }
-                viewModel.trackLocation(track)
-                btnStart.text = getString(btnRes)
-            }
+            btnStart.setOnClickListener { toggleRunButton() }
         }
+    }
+
+    private fun toggleRunButton() {
+        val btnRes: Int
+        val startRes = R.string.start
+        if (binding.btnStart.text == getString(startRes)) {
+            startService()
+            viewModel.stopTracking()
+            btnRes = R.string.finish_run
+        } else {
+            btnRes = R.string.start
+            stopService()
+        }
+        binding.btnStart.text = getString(btnRes)
+    }
+
+    private fun setupMap() {
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+    }
+
+    private fun startService() {
+        val intent = Intent(requireContext(), RunningForegroundService::class.java).also { intent ->
+            isBound = requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+        requireActivity().startForegroundService(intent)
+    }
+
+    private fun stopService() {
+        if (isBound) {
+            requireContext().unbindService(connection)
+            isBound = false
+        }
+        runningService?.finishRun()
+        runningService?.runInfo?.removeObservers(viewLifecycleOwner)
+        googleMap.clear()
+        runningService = null
+        viewModel.trackCurrentLocation()
     }
 
     private fun updateRunInfo(runInfo: RunInfo) {
@@ -127,6 +145,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private fun drawRoute(locations: List<LatLng>) {
         val polylineOptions = PolylineOptions()
+        //todo: map: too much overdraws
 
         googleMap.clear()
 
@@ -146,7 +165,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             googleMap.isMyLocationEnabled = true
         }
         //load location
-        viewModel.getUserLocation()
+        viewModel.trackCurrentLocation()
     }
 
     private companion object {
