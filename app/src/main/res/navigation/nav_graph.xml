@@ -4,6 +4,14 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/map_nav_graph">
     <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.karyna.runningapp.auth.AuthFragment"
+        android:label="Sign in">
+        <action
+            android:id="@+id/action_loginFragment_to_map"
+            app:destination="@id/map_nav_graph" />
+    </fragment>
+    <fragment
         android:id="@+id/socialFragment"
         android:label="Social" />
 
@@ -11,4 +19,9 @@
         android:id="@+id/personalFragment"
         android:label="Personal" />
     <include app:graph="@navigation/map_nav_graph" />
+    <action
+        android:id="@+id/action_global_loginFragment"
+        app:destination="@id/loginFragment"
+        app:popUpTo="@id/loginFragment"
+        app:popUpToInclusive="true" />
 </navigation>

@@ -56,7 +56,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val activity = requireActivity() as AppCompatActivity
-        permissionsManager = PermissionsManager(activity) { checkPermission(googleMap) }
+        permissionsManager = PermissionsManager(this) { checkPermission(googleMap) }
         viewModel.init(activity)
     }
 

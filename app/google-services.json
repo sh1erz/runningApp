@@ -14,15 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "492142744515-j2eandmk05i02i4ktguo1u9p6op0c0h6.apps.googleusercontent.com",
+          "client_id": "492142744515-p8e0hdd0un38rk1s7cm2kuoc31r9al6o.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.karyna.runningapp",
-            "certificate_hash": "a789e505c817a122ea906ea6eaa3d48b3a30ab18"
+            "certificate_hash": "6f61ee70362aeaebffa5f659122e13e858acc242"
           }
         },
         {
-          "client_id": "492142744515-am78omqmrk3uoek0o7ad7k1cnto6l1o0.apps.googleusercontent.com",
+          "client_id": "492142744515-mb1sglvvttbdl16vkmi53b20pnnj85m1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

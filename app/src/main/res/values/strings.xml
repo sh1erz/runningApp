@@ -5,4 +5,5 @@
     <string name="social">Social</string>
     <string name="training">Training</string>
     <string name="personal">Personal</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
 </resources>

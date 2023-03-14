@@ -16,3 +16,4 @@ rootProject.name = "RunningApp"
 include ':app'
 include ':feature-main'
 include ':feature-core'
+include ':core'

@@ -54,23 +54,38 @@ ext.appDependencies = dependencyGroup {
     implementation project(":feature-main")
 
     implementation 'com.google.firebase:firebase-bom:31.2.2'
+
+    implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
 }
 
 ext.ui = dependencyGroup {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation "com.google.dagger:hilt-android:$hiltVersion"
-    kapt "com.google.dagger:hilt-compiler:$hiltVersion"
+    hiltDeps()
+    testDeps()
 
-    implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
-    implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
+    implementation "androidx.navigation:navigation-fragment-ktx:$navVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$navVersion"
 
     implementation "androidx.core:core-ktx:$androidxVersion"
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'com.google.android.material:material:1.8.0'
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayoutVersion"
-    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+}
+
+ext.testDeps = dependencyGroup {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    testImplementation 'junit:junit:4.13.2'
+}
+
+ext.hiltDeps = dependencyGroup {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation "com.google.dagger:hilt-android:$hiltVersion"
+    kapt "com.google.dagger:hilt-compiler:$hiltVersion"
 }
 
 ext.gms = dependencyGroup {
