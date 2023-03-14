@@ -47,13 +47,16 @@ def dependencyGroup(Closure closure) {
     return closure
 }
 
-ext.modulesDependencies = dependencyGroup {
+ext.appDependencies = dependencyGroup {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation project(":feature-core")
     implementation project(":feature-main")
+
+    implementation 'com.google.firebase:firebase-bom:31.2.2'
 }
 
-ext.presentationDependencies = dependencyGroup {
+ext.ui = dependencyGroup {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "com.google.dagger:hilt-android:$hiltVersion"
@@ -72,4 +75,7 @@ ext.presentationDependencies = dependencyGroup {
 
 ext.gms = dependencyGroup {
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.google.maps.android:android-maps-utils:2.2.3'
+    implementation 'com.google.maps.android:maps-utils-ktx:3.2.0'
 }
