@@ -169,6 +169,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private companion object {
-        const val MAP_ZOOM = 14f
+        const val MAP_ZOOM = 19f
     }
 }

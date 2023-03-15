@@ -53,17 +53,21 @@ ext.appDependencies = dependencyGroup {
     implementation project(":feature-core")
     implementation project(":feature-main")
 
+    commonDeps()
+    ui()
     implementation 'com.google.firebase:firebase-bom:31.2.2'
-
     implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
 }
 
+ext.featureDeps = dependencyGroup {
+    commonDeps()
+    ui()
+}
 ext.ui = dependencyGroup {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     hiltDeps()
-    testDeps()
 
     implementation "androidx.navigation:navigation-fragment-ktx:$navVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navVersion"
@@ -75,9 +79,10 @@ ext.ui = dependencyGroup {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
 }
 
-ext.testDeps = dependencyGroup {
+ext.commonDeps = dependencyGroup {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation 'com.jakewharton.timber:timber:5.0.1'
     testImplementation 'junit:junit:4.13.2'
 }
 

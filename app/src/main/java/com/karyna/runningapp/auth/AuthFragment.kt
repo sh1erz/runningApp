@@ -2,31 +2,28 @@ package com.karyna.runningapp.auth
 
 import android.content.IntentSender
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
+import com.karyna.feature.core.utils.base.BaseFragment
 import com.karyna.runningapp.databinding.FragmentAuthBinding
+import timber.log.Timber
 import com.karyna.feature.core.R as RCore
 
-class AuthFragment : Fragment() {
-    private var _binding: FragmentAuthBinding? = null
-    private val binding get() = _binding!!
-    private val viewModel: AuthViewModel by viewModels()
+class AuthFragment : BaseFragment<FragmentAuthBinding, AuthViewModel>() {
 
-    private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentAuthBinding =
+        { layoutInflater, viewGroup, b -> FragmentAuthBinding.inflate(layoutInflater, viewGroup, b) }
+    override val viewModel: AuthViewModel by viewModels()
+
     private var showOneTapUI = true
     private lateinit var oneTapClient: SignInClient
 
@@ -36,59 +33,29 @@ class AuthFragment : Fragment() {
                 try {
                     val credential = oneTapClient.getSignInCredentialFromIntent(result.data)
                     val idToken = credential.googleIdToken
-                    when {
-                        idToken != null -> {
-                            val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-                            firebaseAuth.signInWithCredential(firebaseCredential)
-                                .addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        navigateToApp()
-                                    } else {
-                                        // todo display a message to the user.
-                                        Log.w("TAG", "signInWithCredential:failure", task.exception)
-                                    }
-                                }
-                        }
-                        else -> {
-                            Log.d("TAG", "No ID token or password!")
-                        }
-                    }
+                    viewModel.processGoogleIdToken(idToken)
                 } catch (e: ApiException) {
                     when (e.statusCode) {
                         CommonStatusCodes.CANCELED -> {
-                            Log.d("TAG", "One-tap dialog was closed.")
-                            // Don't re-prompt the user.
+                            Timber.d("One-tap dialog was closed.")
                             showOneTapUI = false
                         }
                         CommonStatusCodes.NETWORK_ERROR -> {
-                            Log.d("TAG", "One-tap encountered a network error.")
+                            Timber.d("One-tap encountered a network error.")
                         }
                         else -> {
-                            Log.d(
-                                "TAG", "Couldn't get credential from result." +
-                                        " (${e.localizedMessage})"
-                            )
+                            Timber.d("Couldn't get credential from result." + " (" + e.message + ")")
                         }
                     }
                 }
             }
         }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentAuthBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        firebaseAuth = FirebaseAuth.getInstance()
         oneTapClient = Identity.getSignInClient(requireActivity())
         binding.btnGoogleSignIn.setOnClickListener { auth() }
-    }
-
-    private fun navigateToApp() {
-        binding.root.findNavController().navigate(AuthFragmentDirections.actionLoginFragmentToMap())
     }
 
     private fun auth() {
@@ -97,8 +64,7 @@ class AuthFragment : Fragment() {
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     .setServerClientId(getString(RCore.string.auth_web_client_id))
-                    // Only show accounts previously used to sign in.
-                    .setFilterByAuthorizedAccounts(true)
+                    .setFilterByAuthorizedAccounts(false)
                     .build()
             )
             .build()
@@ -108,12 +74,13 @@ class AuthFragment : Fragment() {
                     val intentSenderRequest = IntentSenderRequest.Builder(result.pendingIntent.intentSender).build()
                     oneTapSignInIntentResultLauncher.launch(intentSenderRequest)
                 } catch (e: IntentSender.SendIntentException) {
-                    Log.e("TAG", "Couldn't start One Tap UI: ${e.localizedMessage}")
+                    Timber.e("Couldn't start One Tap UI: " + e.message)
                 }
             }
             .addOnFailureListener { e ->
-                // No saved credentials found. todo Launch the One Tap sign-up flow
-                Log.d("TAG", e.localizedMessage.orEmpty())
+                // No saved credentials found
+                Timber.d(e.message.orEmpty())
+                if (showOneTapUI) oneTapClient.beginSignIn(signInRequest)
             }
     }
 }
