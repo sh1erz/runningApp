@@ -1,11 +1,16 @@
 package com.karyna.runningapp
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.karyna.runningapp.auth.AuthFragment
 import com.karyna.runningapp.auth.AuthFragmentDirections
 import com.karyna.runningapp.databinding.ActivityNavHostBinding
 import com.karyna.feature.main.R as RMain
@@ -47,6 +52,19 @@ class NavHostActivity : AppCompatActivity() {
         navGraph.setStartDestination(startDestinationId)
         navController.graph = navGraph
         binding.bottomNavView.setupWithNavController(navController)
+        setBottomNavBarVisibility()
+    }
+
+    private fun setBottomNavBarVisibility() {
+        supportFragmentManager.registerFragmentLifecycleCallbacks(object :
+            FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentViewCreated(fm: FragmentManager, f: Fragment, v: View, savedInstanceState: Bundle?) {
+                binding.bottomNavView.isVisible = when (f) {
+                    is AuthFragment -> false
+                    else -> true
+                }
+            }
+        }, true)
     }
 
     private fun navigateToSignIn() {
