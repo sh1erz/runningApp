@@ -13,6 +13,7 @@ import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.firebase.auth.FirebaseAuth
 import com.karyna.feature.core.utils.base.BaseFragment
 import com.karyna.runningapp.databinding.FragmentAuthBinding
 import timber.log.Timber

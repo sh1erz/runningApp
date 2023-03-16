@@ -15,6 +15,9 @@ ext {
     // Hilt
     hiltVersion = '2.44'
 
+    //Room
+    roomVersion = "2.5.0"
+
     //Navigation
     navVersion = "2.5.3"
 
@@ -37,9 +40,6 @@ ext {
     // Logs + Crash Reporting
     timberVersion = '4.7.0'
 
-    //Database
-    roomVersion = "2.4.2"
-
 }
 
 def dependencyGroup(Closure closure) {
@@ -60,13 +60,40 @@ ext.appDependencies = dependencyGroup {
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
 }
 
-ext.featureDeps = dependencyGroup {
+ext.featureCoreDeps = dependencyGroup {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(":core")
+
     commonDeps()
     ui()
 }
-ext.ui = dependencyGroup {
+
+ext.featureDeps = dependencyGroup {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(":feature-core")
+    implementation project(":core")
+
+    commonDeps()
+    ui()
+}
+
+ext.coreDeps = dependencyGroup {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    hiltDeps()
+    commonDeps()
+}
+
+ext.frameworkDeps = dependencyGroup {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(":core")
+
+    room()
+    hiltDeps()
+    commonDeps()
+}
+
+ext.ui = dependencyGroup {
     hiltDeps()
 
     implementation "androidx.navigation:navigation-fragment-ktx:$navVersion"
@@ -80,15 +107,11 @@ ext.ui = dependencyGroup {
 }
 
 ext.commonDeps = dependencyGroup {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation 'com.jakewharton.timber:timber:5.0.1'
     testImplementation 'junit:junit:4.13.2'
 }
 
 ext.hiltDeps = dependencyGroup {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation "com.google.dagger:hilt-android:$hiltVersion"
     kapt "com.google.dagger:hilt-compiler:$hiltVersion"
 }
@@ -98,4 +121,14 @@ ext.gms = dependencyGroup {
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.maps.android:android-maps-utils:2.2.3'
     implementation 'com.google.maps.android:maps-utils-ktx:3.2.0'
+}
+
+ext.room = dependencyGroup {
+    implementation "androidx.room:room-runtime:$roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    // Paging 3 Integration
+    implementation "androidx.room:room-paging:$roomVersion"
+
+    testImplementation "androidx.room:room-testing:$roomVersion"
 }

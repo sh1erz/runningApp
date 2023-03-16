@@ -7,7 +7,7 @@ plugins {
 apply from: "$project.rootDir/buildsystem/dependencies.gradle"
 
 android {
-    namespace 'com.karyna.core'
+    namespace 'com.karyna.framework'
 
     defaultConfig {
         def globalConfig = rootProject.ext
@@ -33,5 +33,5 @@ android {
 }
 
 dependencies {
-    coreDeps()
+    frameworkDeps()
 }
