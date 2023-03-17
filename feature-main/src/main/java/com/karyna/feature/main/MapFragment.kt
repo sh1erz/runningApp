@@ -85,7 +85,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         with(viewModel) {
             currentLocation.observe(viewLifecycleOwner) {
                 if (it != null && it != googleMap.cameraPosition.target) {
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(it, MAP_ZOOM))
+                    if (googleMap.cameraPosition.zoom != googleMap.minZoomLevel) {
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLng(it))
+                    } else {
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(it, MAP_ZOOM))
+                    }
                 }
             }
         }
@@ -169,6 +173,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private companion object {
-        const val MAP_ZOOM = 19f
+        const val MAP_ZOOM = 18f
     }
 }

@@ -5,7 +5,7 @@ import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
 
 data class Run(
-    val id: String,
+    val id: Long,
     val date: String,
     val location: LocationShort,
     val user: User,
