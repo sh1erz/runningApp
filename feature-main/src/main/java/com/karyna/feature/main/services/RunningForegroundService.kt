@@ -4,17 +4,32 @@ import android.app.*
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.MutableLiveData
+import com.karyna.core.data.RunningRepository
+import com.karyna.core.domain.LocationShort
+import com.karyna.core.domain.User
+import com.karyna.core.domain.run.Run
 import com.karyna.feature.core.utils.StringFormatter
 import com.karyna.feature.main.R
 import com.karyna.feature.main.map.LocationProvider
 import com.karyna.feature.main.map.RunInfo
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 import com.karyna.feature.core.R as RCore
 
+@AndroidEntryPoint
 class RunningForegroundService : Service() {
+
     val runInfo = MutableLiveData(RunInfo.EMPTY)
+
+    @Inject
+    lateinit var repository: RunningRepository
+
+    private val scope by lazy { CoroutineScope(Dispatchers.Default) }
 
     private val binder = RunningBinder()
     private val locationProvider by lazy { LocationProvider(this) }
@@ -33,6 +48,24 @@ class RunningForegroundService : Service() {
 
     fun finishRun() {
         //todo save data
+        runInfo.value?.let {
+            scope.launch {
+                repository.saveRun(
+                    //todo map run info
+                    Run(
+                        id = 0,
+                        date = "",
+                        location = LocationShort(country = "", city = ""),
+                        user = User(email = "", name = "", avatarUrl = "", weight = null),
+                        coordinates = listOf(),
+                        durationMs = 0,
+                        distanceMeters = 0,
+                        paceMetersInS = 0,
+                        calories = null
+                    )
+                )
+            }
+        }
         runInfo.value = RunInfo.EMPTY
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
@@ -50,10 +83,6 @@ class RunningForegroundService : Service() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i("TAG", "onDestroy service")
-    }
     private fun createNotification(): Notification {
         val notificationIntent = requireNotNull(packageManager.getLaunchIntentForPackage(packageName))
         val pendingIntent = PendingIntent.getActivity(

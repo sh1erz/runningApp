@@ -7,14 +7,15 @@ import com.karyna.core.domain.run.RunShort
 interface RunningRepository {
     //PERSONAL
 
-    fun getRun(userEmail: String): Result<Run>
+    suspend fun getRun(userEmail: String): Result<Run>
+
     //todo pagination, filtration
-    fun getRunsShort(userEmail: String): Result<List<Run>>
-    fun getUser(userEmail: String): Result<User>
+    suspend fun getRunsShort(userEmail: String): Result<List<Run>>
+    suspend fun getUser(userEmail: String): Result<User>
 
     //SOCIAL
-    fun getTopRuns(amount: Int, lastDays: Int?, country: String?): Result<List<RunShort>>
+    suspend fun getTopRuns(amount: Int, lastDays: Int?, country: String?): Result<List<RunShort>>
 
     //MAP
-    fun saveRun(run: Run): Result<Unit>
+    suspend fun saveRun(run: Run): Result<Unit>
 }

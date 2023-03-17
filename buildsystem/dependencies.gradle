@@ -50,6 +50,9 @@ def dependencyGroup(Closure closure) {
 ext.appDependencies = dependencyGroup {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation project(":core")
+    implementation project(":framework")
+
     implementation project(":feature-core")
     implementation project(":feature-main")
 

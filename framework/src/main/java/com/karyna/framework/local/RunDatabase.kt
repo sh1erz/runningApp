@@ -13,4 +13,8 @@ import com.karyna.framework.local.dao.UserDao
 abstract class RunDatabase : RoomDatabase() {
     abstract fun runDao(): RunDao
     abstract fun userDao(): UserDao
+
+    companion object {
+        const val DB_NAME = "run_database"
+    }
 }
