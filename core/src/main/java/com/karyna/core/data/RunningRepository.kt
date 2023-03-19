@@ -5,8 +5,9 @@ import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunShort
 
 interface RunningRepository {
-    //PERSONAL
+    suspend fun addUser(user: User): Result<Unit>
 
+    //PERSONAL
     suspend fun getRun(userEmail: String): Result<Run>
 
     //todo pagination, filtration

@@ -13,8 +13,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.karyna.runningapp.auth.AuthFragment
 import com.karyna.runningapp.auth.AuthFragmentDirections
 import com.karyna.runningapp.databinding.ActivityNavHostBinding
+import dagger.hilt.android.AndroidEntryPoint
 import com.karyna.feature.main.R as RMain
 
+@AndroidEntryPoint
 class NavHostActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNavHostBinding

@@ -11,3 +11,13 @@ fun userToDomain(user: User) = with(user) {
         weight = weight
     )
 }
+
+fun userToDto(user: DomainUser) = with(user) {
+    User(
+        id = 0,
+        email = email,
+        name = name,
+        avatarUrl = avatarUrl,
+        weight = weight
+    )
+}

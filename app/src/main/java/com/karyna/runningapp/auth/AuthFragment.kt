@@ -13,12 +13,13 @@ import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
-import com.google.firebase.auth.FirebaseAuth
 import com.karyna.feature.core.utils.base.BaseFragment
 import com.karyna.runningapp.databinding.FragmentAuthBinding
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import com.karyna.feature.core.R as RCore
 
+@AndroidEntryPoint
 class AuthFragment : BaseFragment<FragmentAuthBinding, AuthViewModel>() {
 
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentAuthBinding =

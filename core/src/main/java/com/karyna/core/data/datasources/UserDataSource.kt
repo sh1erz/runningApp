@@ -5,5 +5,5 @@ import com.karyna.core.domain.User
 
 interface UserDataSource {
     fun getUser(userEmail: String): Result<User>
-//    fun saveUser(user: User): Result<Unit>
+    fun addUser(user: User): Result<Unit>
 }

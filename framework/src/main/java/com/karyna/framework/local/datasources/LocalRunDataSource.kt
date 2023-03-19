@@ -1,10 +1,11 @@
-package com.karyna.framework.local
+package com.karyna.framework.local.datasources
 
 import android.database.sqlite.SQLiteException
 import com.karyna.core.data.Result
 import com.karyna.core.data.datasources.RunDataSource
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunShort
+import com.karyna.framework.local.EntryDoesNotExists
 import com.karyna.framework.local.dao.RunDao
 import com.karyna.framework.local.dao.UserDao
 import com.karyna.framework.mappers.runToDomain

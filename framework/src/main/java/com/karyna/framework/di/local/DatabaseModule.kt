@@ -1,4 +1,4 @@
-package com.karyna.framework.local.di
+package com.karyna.framework.di.local
 
 import android.content.Context
 import androidx.room.Room
