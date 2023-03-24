@@ -2,6 +2,8 @@ package com.karyna.core.data
 
 import com.karyna.core.data.datasources.RunDataSource
 import com.karyna.core.data.datasources.UserDataSource
+import com.karyna.core.domain.LatLng
+import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunShort
@@ -37,7 +39,26 @@ class RunningRepositoryImpl @Inject constructor(
             TODO("Not yet implemented")
         }
 
-    override suspend fun saveRun(run: Run): Result<Unit> = withContext(Dispatchers.IO) {
-        localRunDataSource.saveRun(run)
+    override suspend fun saveRun(
+        userEmail: String,
+        date: String,
+        location: LocationShort,
+        coordinates: List<LatLng>,
+        durationS: Long,
+        distanceMeters: Int,
+        paceMetersInS: Int,
+        calories: Int?
+    ): Result<Unit> = withContext(Dispatchers.IO) {
+        //todo: back: move to input class
+        localRunDataSource.saveRun(
+            userEmail = userEmail,
+            date = date,
+            location = location,
+            coordinates = coordinates,
+            durationS = durationS,
+            distanceMeters = distanceMeters,
+            paceMetersInS = paceMetersInS,
+            calories = calories
+        )
     }
 }

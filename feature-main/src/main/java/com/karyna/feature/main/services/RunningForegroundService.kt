@@ -4,32 +4,47 @@ import android.app.*
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.text.format.DateUtils
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.MutableLiveData
 import com.karyna.core.data.RunningRepository
+import com.karyna.core.domain.LatLng
 import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
-import com.karyna.core.domain.run.Run
 import com.karyna.feature.core.utils.StringFormatter
+import com.karyna.feature.core.utils.utils.flowRepeatEvery
 import com.karyna.feature.main.R
 import com.karyna.feature.main.map.LocationProvider
-import com.karyna.feature.main.map.RunInfo
+import com.karyna.feature.main.map.RunUiInfo
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 import com.karyna.feature.core.R as RCore
 
 @AndroidEntryPoint
 class RunningForegroundService : Service() {
 
-    val runInfo = MutableLiveData(RunInfo.EMPTY)
-
     @Inject
     lateinit var repository: RunningRepository
 
+    @Inject
+    lateinit var user: User
+
     private val scope by lazy { CoroutineScope(Dispatchers.Default) }
+    var timerJob: Job? = null
+
+    private val _uiState = MutableStateFlow(RunUiInfo.EMPTY)
+    val uiState: StateFlow<RunUiInfo> = _uiState
+
+    private var runDurationS: Long = 0
+    private var distanceM: Int = 0
 
     private val binder = RunningBinder()
     private val locationProvider by lazy { LocationProvider(this) }
@@ -43,43 +58,55 @@ class RunningForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(1, createNotification())
         observeLocation()
+        startTimer()
         return START_NOT_STICKY
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        finishTimer()
+    }
+
     fun finishRun() {
+        finishTimer()
         //todo save data
-        runInfo.value?.let {
+        with(_uiState.value) {
             scope.launch {
                 repository.saveRun(
+                    userEmail = user.email,
+                    date = "",
+                    location = LocationShort(country = "", city = ""),
+                    coordinates = userPath.map { LatLng(it.latitude, it.longitude) },
+                    durationS = runDurationS,
+                    distanceMeters = distanceM,
+                    paceMetersInS = if (runDurationS <= 0) 0 else (distanceM / runDurationS).toInt(),
+                    //todo calories
+                    calories = null
                     //todo map run info
-                    Run(
-                        id = 0,
-                        date = "",
-                        location = LocationShort(country = "", city = ""),
-                        user = User(email = "", name = "", avatarUrl = "", weight = null),
-                        coordinates = listOf(),
-                        durationMs = 0,
-                        distanceMeters = 0,
-                        paceMetersInS = 0,
-                        calories = null
-                    )
                 )
             }
         }
-        runInfo.value = RunInfo.EMPTY
+        _uiState.value = RunUiInfo.EMPTY
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
-    private fun observeLocation() {
-        locationProvider.trackUserRun()
-        locationProvider.liveLocations.observeForever { locations ->
-            runInfo.value = runInfo.value?.copy(userPath = locations)
+    private fun observeLocation() = with(locationProvider) {
+        trackUserRun()
+        liveLocations.observeForever { locations ->
+            _uiState.update { _uiState.value.copy(userPath = locations) }
         }
 
-        locationProvider.liveDistance.observeForever { distance ->
-            runInfo.value =
-                runInfo.value?.copy(formattedDistance = StringFormatter.from(R.string.distance_value, distance))
+        liveDistance.observeForever { distance ->
+            distanceM = distance
+            _uiState.update {
+                _uiState.value.copy(formattedDistance = StringFormatter.from(R.string.n_meters, distance))
+            }
+        }
+        livePace.observeForever { pace ->
+            _uiState.update {
+                _uiState.value.copy(formattedPace = StringFormatter.from(R.string.format_meters_in_second, pace))
+            }
         }
     }
 
@@ -107,6 +134,22 @@ class RunningForegroundService : Service() {
         val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(mChannel)
+    }
+
+    private fun startTimer() {
+        timerJob = scope.launch(Dispatchers.Main) {
+            flowRepeatEvery(1000).collectLatest {
+                Timber.d("Duration: $runDurationS")
+                runDurationS += 1
+                _uiState.update {
+                    _uiState.value.copy(duration = DateUtils.formatElapsedTime(runDurationS))
+                }
+            }
+        }
+    }
+
+    private fun finishTimer() {
+        timerJob?.cancel()
     }
 
     companion object {

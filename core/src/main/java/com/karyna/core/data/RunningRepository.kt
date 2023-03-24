@@ -1,5 +1,7 @@
 package com.karyna.core.data
 
+import com.karyna.core.domain.LatLng
+import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunShort
@@ -18,5 +20,14 @@ interface RunningRepository {
     suspend fun getTopRuns(amount: Int, lastDays: Int?, country: String?): Result<List<RunShort>>
 
     //MAP
-    suspend fun saveRun(run: Run): Result<Unit>
+    suspend fun saveRun(
+        userEmail: String,
+        date: String,
+        location: LocationShort,
+        coordinates: List<LatLng>,
+        durationS: Long,
+        distanceMeters: Int,
+        paceMetersInS: Int,
+        calories: Int?
+    ): Result<Unit>
 }

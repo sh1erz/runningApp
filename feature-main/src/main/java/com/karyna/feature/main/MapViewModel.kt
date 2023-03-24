@@ -4,8 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
+import com.karyna.feature.core.utils.base.BaseViewModel
 import com.karyna.feature.main.map.LocationProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -13,7 +13,7 @@ import kotlin.properties.Delegates
 
 @HiltViewModel
 class MapViewModel @Inject constructor() :
-    ViewModel(), DefaultLifecycleObserver {
+    BaseViewModel(), DefaultLifecycleObserver {
     val currentLocation = MutableLiveData<LatLng?>(null)
 
     private var locationProvider by Delegates.notNull<LocationProvider>()

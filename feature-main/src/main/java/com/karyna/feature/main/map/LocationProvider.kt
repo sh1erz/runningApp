@@ -21,6 +21,7 @@ class LocationProvider(private val context: Context) {
 
     private val locations = mutableListOf<LatLng>()
     private var distance = 0
+    private var timeSinceLastUpdateMs = 0L
     private val runLocationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             val currentLocation = result.lastLocation
@@ -28,13 +29,20 @@ class LocationProvider(private val context: Context) {
             val lastLocation = locations.lastOrNull()
 
             if (lastLocation != null) {
-                distance += SphericalUtil.computeDistanceBetween(lastLocation, latLng).roundToInt()
+                val lastLocationDifference = SphericalUtil.computeDistanceBetween(lastLocation, latLng).roundToInt()
+                distance += lastLocationDifference
                 liveDistance.value = distance
+                //calculate pace
+                val newTimeMs = System.currentTimeMillis()
+                val timeDifferenceS = (newTimeMs - timeSinceLastUpdateMs) / 1000.0
+                livePace.value = (lastLocationDifference / timeDifferenceS).toInt()
+
             }
             if (latLng != locations.lastOrNull()) {
                 locations.add(latLng)
                 liveLocations.value = locations
             }
+            timeSinceLastUpdateMs = System.currentTimeMillis()
         }
     }
     private val currentLocationCallback = object : LocationCallback() {
@@ -47,6 +55,7 @@ class LocationProvider(private val context: Context) {
     val liveLocation = MutableLiveData<LatLng>()
     val liveLocations = MutableLiveData<List<LatLng>>()
     val liveDistance = MutableLiveData<Int>()
+    val livePace = MutableLiveData<Int>()
 
     //4
     @SuppressLint("MissingPermission")
@@ -70,6 +79,7 @@ class LocationProvider(private val context: Context) {
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 500
         client.requestLocationUpdates(locationRequest, runLocationCallback, Looper.getMainLooper())
+        timeSinceLastUpdateMs = System.currentTimeMillis()
     }
 
     fun stopTracking() {

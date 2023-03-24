@@ -3,13 +3,15 @@ package com.karyna.framework.local.datasources
 import android.database.sqlite.SQLiteException
 import com.karyna.core.data.Result
 import com.karyna.core.data.datasources.RunDataSource
+import com.karyna.core.domain.LatLng
+import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunShort
 import com.karyna.framework.local.EntryDoesNotExists
 import com.karyna.framework.local.dao.RunDao
 import com.karyna.framework.local.dao.UserDao
+import com.karyna.framework.mappers.runInputToDto
 import com.karyna.framework.mappers.runToDomain
-import com.karyna.framework.mappers.runToDto
 import javax.inject.Inject
 
 class LocalRunDataSource @Inject constructor(private val runDao: RunDao, private val userDao: UserDao) : RunDataSource {
@@ -41,11 +43,31 @@ class LocalRunDataSource @Inject constructor(private val runDao: RunDao, private
         TODO("Not yet implemented")
     }
 
-    override fun saveRun(run: Run): Result<Unit> = try {
-        val userId = userDao.getUser(run.user.email)
-            ?: throw EntryDoesNotExists("No user with email ${run.user.email}")
+    override fun saveRun(
+        userEmail: String,
+        date: String,
+        location: LocationShort,
+        coordinates: List<LatLng>,
+        durationS: Long,
+        distanceMeters: Int,
+        paceMetersInS: Int,
+        calories: Int?
+    ): Result<Unit> = try {
+        val userId = userDao.getUser(userEmail)?.id
+            ?: throw EntryDoesNotExists("No user with email $userEmail")
 
-        runDao.insertRun(runToDto(run, userId))
+        runDao.insertRun(
+            runInputToDto(
+                userId = userId,
+                date = date,
+                location = location,
+                coordinates = coordinates,
+                durationS = durationS,
+                distanceMeters = distanceMeters,
+                paceMetersInS = paceMetersInS,
+                calories = calories
+            )
+        )
         Result.Success(Unit)
     } catch (ex: SQLiteException) {
         Result.Failure(ex)

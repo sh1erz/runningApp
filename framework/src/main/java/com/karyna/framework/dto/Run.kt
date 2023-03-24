@@ -32,7 +32,7 @@ data class Run(
     val coordinates: ArrayList<LatLng>,
     @ColumnInfo(name = "durationMs")
     @SerializedName("durationMs")
-    val durationMs: Long,
+    val durationS: Long,
     @ColumnInfo(name = "distance")
     @SerializedName("distance")
     val distanceMeters: Int,

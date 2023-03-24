@@ -13,29 +13,37 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
+import com.karyna.feature.core.utils.base.BaseFragment
 import com.karyna.feature.main.databinding.FragmentMapBinding
 import com.karyna.feature.main.map.PermissionsManager
-import com.karyna.feature.main.map.RunInfo
+import com.karyna.feature.main.map.RunUiInfo
 import com.karyna.feature.main.services.RunningForegroundService
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
-class MapFragment : Fragment(), OnMapReadyCallback {
+class MapFragment : BaseFragment<FragmentMapBinding, MapViewModel>(), OnMapReadyCallback {
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentMapBinding =
+        { layoutInflater, viewGroup, b -> FragmentMapBinding.inflate(layoutInflater, viewGroup, b) }
+    override val viewModel: MapViewModel by viewModels()
 
-    private var _binding: FragmentMapBinding? = null
-    private val binding get() = _binding!!
-    private val viewModel: MapViewModel by viewModels()
     private var googleMap: GoogleMap by Delegates.notNull()
     private var permissionsManager by Delegates.notNull<PermissionsManager>()
 
     private var runningService: RunningForegroundService? = null
+    private var serviceListenerJob: Job? = null
     private var isBound: Boolean = false
 
     /** Defines callbacks for service binding, passed to bindService()  */
@@ -44,7 +52,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             (service as? RunningForegroundService.RunningBinder)?.let {
                 runningService = it.getService()
-                runningService?.runInfo?.observe(viewLifecycleOwner, ::updateRunInfo)
+                serviceListenerJob = viewLifecycleOwner.lifecycleScope.launch {
+                    ensureActive()
+                    repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                        runningService?.uiState?.collect(::updateRunInfo)
+                    }
+                }
             }
         }
 
@@ -62,8 +75,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
-        _binding = FragmentMapBinding.inflate(inflater, container, false)
-        return binding.root
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,14 +93,15 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
         googleMap.uiSettings.isZoomControlsEnabled = true
+        googleMap.setMinZoomPreference(MIN_MAP_ZOOM)
         permissionsManager.requestUserLocation()
         with(viewModel) {
             currentLocation.observe(viewLifecycleOwner) {
                 if (it != null && it != googleMap.cameraPosition.target) {
-                    if (googleMap.cameraPosition.zoom != googleMap.minZoomLevel) {
+                    if (googleMap.cameraPosition.zoom != MIN_MAP_ZOOM) {
                         googleMap.animateCamera(CameraUpdateFactory.newLatLng(it))
                     } else {
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(it, MAP_ZOOM))
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it, MAP_ZOOM))
                     }
                 }
             }
@@ -105,14 +118,20 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val btnRes: Int
         val startRes = R.string.start
         if (binding.btnStart.text == getString(startRes)) {
-            startService()
-            viewModel.stopTracking()
+            startRun()
             btnRes = R.string.finish_run
         } else {
             btnRes = R.string.start
             stopService()
+            binding.cvInfo.isVisible = false
         }
         binding.btnStart.text = getString(btnRes)
+    }
+
+    private fun startRun() {
+        startService()
+        viewModel.stopTracking()
+        binding.cvInfo.isVisible = true
     }
 
     private fun setupMap() {
@@ -133,18 +152,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             isBound = false
         }
         runningService?.finishRun()
-        runningService?.runInfo?.removeObservers(viewLifecycleOwner)
+        serviceListenerJob?.cancel()
         googleMap.clear()
         runningService = null
         viewModel.trackCurrentLocation()
-    }
-
-    private fun updateRunInfo(runInfo: RunInfo) {
-        with(binding) {
-            tvDistance.text = runInfo.formattedDistance
-            tvPace.text = runInfo.formattedPace
-            drawRoute(runInfo.userPath)
-        }
     }
 
     private fun drawRoute(locations: List<LatLng>) {
@@ -172,7 +183,27 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         viewModel.trackCurrentLocation()
     }
 
+    private fun updateRunInfo(runUiInfo: RunUiInfo) {
+        with(binding) {
+            tvDistanceValue.text = runUiInfo.formattedDistance
+            tvPaceValue.text = runUiInfo.formattedPace
+            tvDurationValue.text = runUiInfo.duration
+            setCalories(runUiInfo.caloriesBurned)
+            drawRoute(runUiInfo.userPath)
+        }
+    }
+
+    private fun setCalories(calories: String?) = with(binding) {
+        val show = calories != null
+        tvCalories.isVisible = show
+        tvCaloriesValue.isVisible = show
+        if (show) {
+            tvCaloriesValue.text = calories
+        }
+    }
+
     private companion object {
         const val MAP_ZOOM = 18f
+        const val MIN_MAP_ZOOM = 16f
     }
 }

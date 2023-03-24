@@ -58,9 +58,8 @@ ext.appDependencies = dependencyGroup {
 
     commonDeps()
     ui()
+    auth()
     implementation 'com.google.firebase:firebase-bom:31.2.2'
-    implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
-    implementation 'com.google.android.gms:play-services-auth:20.4.1'
 }
 
 ext.featureCoreDeps = dependencyGroup {
@@ -69,6 +68,7 @@ ext.featureCoreDeps = dependencyGroup {
 
     commonDeps()
     ui()
+    auth()
 }
 
 ext.featureDeps = dependencyGroup {
@@ -129,6 +129,11 @@ ext.gms = dependencyGroup {
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.maps.android:android-maps-utils:2.2.3'
     implementation 'com.google.maps.android:maps-utils-ktx:3.2.0'
+}
+
+ext.auth = dependencyGroup {
+    implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
 }
 
 ext.room = dependencyGroup {
