@@ -11,6 +11,7 @@ import com.karyna.core.domain.LatLng
 import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
 import com.karyna.feature.core.utils.StringFormatter
+import com.karyna.feature.core.utils.utils.DateUtils.toIsoDate
 import com.karyna.feature.core.utils.utils.flowRepeatEvery
 import com.karyna.feature.main.R
 import com.karyna.feature.main.map.LocationProvider
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.OffsetDateTime
 import javax.inject.Inject
 import com.karyna.feature.core.R as RCore
 
@@ -45,6 +47,7 @@ class RunningForegroundService : Service() {
 
     private var runDurationS: Long = 0
     private var distanceM: Int = 0
+    private var date = OffsetDateTime.now()
 
     private val binder = RunningBinder()
     private val locationProvider by lazy { LocationProvider(this) }
@@ -69,12 +72,11 @@ class RunningForegroundService : Service() {
 
     fun finishRun() {
         finishTimer()
-        //todo save data
         with(_uiState.value) {
             scope.launch {
                 repository.saveRun(
                     userEmail = user.email,
-                    date = "",
+                    date = date.toIsoDate(),
                     location = LocationShort(country = "", city = ""),
                     coordinates = userPath.map { LatLng(it.latitude, it.longitude) },
                     durationS = runDurationS,
@@ -82,7 +84,6 @@ class RunningForegroundService : Service() {
                     paceMetersInS = if (runDurationS <= 0) 0 else (distanceM / runDurationS).toInt(),
                     //todo calories
                     calories = null
-                    //todo map run info
                 )
             }
         }
