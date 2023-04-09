@@ -6,10 +6,12 @@ import android.os.Binder
 import android.os.IBinder
 import android.text.format.DateUtils
 import androidx.core.app.NotificationCompat
+import com.karyna.core.data.Result
 import com.karyna.core.data.RunningRepository
 import com.karyna.core.domain.LatLng
 import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
+import com.karyna.core.domain.run.RunInput
 import com.karyna.feature.core.utils.StringFormatter
 import com.karyna.feature.core.utils.utils.DateUtils.toIsoDate
 import com.karyna.feature.core.utils.utils.flowRepeatEvery
@@ -74,17 +76,24 @@ class RunningForegroundService : Service() {
         finishTimer()
         with(_uiState.value) {
             scope.launch {
-                repository.saveRun(
-                    userId = user.id,
-                    date = date.toIsoDate(),
-                    location = LocationShort(country = "", city = ""),
-                    coordinates = userPath.map { LatLng(it.latitude, it.longitude) },
-                    durationS = runDurationS,
-                    distanceMeters = distanceM,
-                    paceMetersInS = if (runDurationS <= 0) 0 else (distanceM / runDurationS).toInt(),
-                    //todo calories
-                    calories = null
+                val result = repository.saveRun(
+                    RunInput(
+                        userId = user.id,
+                        userName = user.name,
+                        date = date.toIsoDate(),
+                        //todo location
+                        location = LocationShort(country = "", city = ""),
+                        coordinates = userPath.map { LatLng(it.latitude, it.longitude) },
+                        durationS = runDurationS,
+                        distanceMeters = distanceM,
+                        paceMetersInS = if (runDurationS <= 0) 0 else (distanceM / runDurationS).toInt(),
+                        //todo calories
+                        calories = null
+                    )
                 )
+                if (result is Result.Failure) {
+                    Timber.e(result.throwable)
+                }
             }
         }
         _uiState.value = RunUiInfo.EMPTY

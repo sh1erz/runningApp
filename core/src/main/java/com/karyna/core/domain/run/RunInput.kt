@@ -3,8 +3,7 @@ package com.karyna.core.domain.run
 import com.karyna.core.domain.LatLng
 import com.karyna.core.domain.LocationShort
 
-data class Run(
-    val id: String,
+data class RunInput(
     val userId: String,
     val userName: String,
     val date: String,

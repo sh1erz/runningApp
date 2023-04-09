@@ -1,5 +1,6 @@
 package com.karyna.framework.di.remote
 
+import com.karyna.core.data.datasources.RemoteRunDataSource
 import com.karyna.core.data.datasources.RemoteUserDataSource
 import com.karyna.framework.remote.RemoteDataSourceImpl
 import dagger.Binds
@@ -12,13 +13,13 @@ import dagger.hilt.components.SingletonComponent
 abstract class RemoteDatasourceModule {
 
     @Binds
-    abstract fun bindRemoteRunDatasource(
-        localRunDatasource: RemoteDataSourceImpl
+    abstract fun bindRemoteUserDatasource(
+        ds: RemoteDataSourceImpl
     ): RemoteUserDataSource
-//
-//    @Binds
-//    abstract fun bindLocalUserDatasource(
-//        localRunDatasource: LocalUserDataSourceImpl
-//    ): LocalUserDataSource
+
+    @Binds
+    abstract fun bindRemoteRunDatasource(
+        ds: RemoteDataSourceImpl
+    ): RemoteRunDataSource
 
 }

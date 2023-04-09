@@ -92,6 +92,7 @@ ext.frameworkDeps = dependencyGroup {
     implementation project(":core")
 
     implementation 'com.google.firebase:firebase-firestore-ktx:24.4.5'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.1'
     //retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"

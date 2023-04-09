@@ -2,11 +2,11 @@ package com.karyna.core.data
 
 import com.karyna.core.data.datasources.LocalRunDataSource
 import com.karyna.core.data.datasources.LocalUserDataSource
+import com.karyna.core.data.datasources.RemoteRunDataSource
 import com.karyna.core.data.datasources.RemoteUserDataSource
-import com.karyna.core.domain.LatLng
-import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
 import com.karyna.core.domain.run.Run
+import com.karyna.core.domain.run.RunInput
 import com.karyna.core.domain.run.RunShort
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,9 +18,12 @@ class RunningRepositoryImpl @Inject constructor(
     private val localRunDataSource: LocalRunDataSource,
     private val localUserDataSource: LocalUserDataSource,
     private val remoteUserDataSource: RemoteUserDataSource,
+    private val remoteRunDataSource: RemoteRunDataSource,
 ) : RunningRepository {
-    override suspend fun addUser(user: User): Result<Unit> = withContext(Dispatchers.IO) {
-        remoteUserDataSource.addUser(user)
+    override suspend fun addUser(user: User, addToRemote: Boolean): Result<Unit> = withContext(Dispatchers.IO) {
+        if (addToRemote) {
+            remoteUserDataSource.addUser(user)
+        }
         localUserDataSource.addUser(user)
     }
 
@@ -42,25 +45,13 @@ class RunningRepositoryImpl @Inject constructor(
         }
 
     override suspend fun saveRun(
-        userId: String,
-        date: String,
-        location: LocationShort,
-        coordinates: List<LatLng>,
-        durationS: Long,
-        distanceMeters: Int,
-        paceMetersInS: Int,
-        calories: Int?
+        runInput: RunInput
     ): Result<Unit> = withContext(Dispatchers.IO) {
-        //todo: back: move to input class
-        localRunDataSource.saveRun(
-            userId = userId,
-            date = date,
-            location = location,
-            coordinates = coordinates,
-            durationS = durationS,
-            distanceMeters = distanceMeters,
-            paceMetersInS = paceMetersInS,
-            calories = calories
-        )
+        val result = remoteRunDataSource.saveRun(runInput)
+        if (result is Result.Success) {
+            localRunDataSource.saveRun(result.value, runInput)
+        } else {
+            Result.Failure((result as? Result.Failure)?.throwable)
+        }
     }
 }

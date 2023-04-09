@@ -9,7 +9,7 @@ interface UserDao {
     @Query("SELECT * FROM user WHERE id LIKE '%' || :id || '%'")
     fun getUser(id: String): User?
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert
     fun insertUser(user: User)
 
     @Delete

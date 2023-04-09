@@ -14,10 +14,10 @@ import com.karyna.core.domain.LocationShort
     )]
 )
 data class Run(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @ColumnInfo(name = "id")
     @SerializedName("id")
-    val id: Long,
+    val id: String,
     @ColumnInfo(name = "date")
     @SerializedName("date")
     val date: String,
@@ -27,11 +27,14 @@ data class Run(
     @ColumnInfo(name = "userId", index = true)
     @SerializedName("userId")
     val userId: String,
+    @ColumnInfo(name = "userName")
+    @SerializedName("userName")
+    val userName: String,
     @ColumnInfo(name = "coordinates")
     @SerializedName("coordinates")
     val coordinates: ArrayList<LatLng>,
-    @ColumnInfo(name = "durationMs")
-    @SerializedName("durationMs")
+    @ColumnInfo(name = "durationS")
+    @SerializedName("durationS")
     val durationS: Long,
     @ColumnInfo(name = "distance")
     @SerializedName("distance")

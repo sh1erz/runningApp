@@ -24,9 +24,7 @@ class AuthViewModel @Inject constructor(private val repository: RunningRepositor
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val isNewUser = task.result.additionalUserInfo?.isNewUser ?: true
-                            if (isNewUser) {
-                                firebaseAuth.currentUser?.let { saveUser(it) }
-                            }
+                            firebaseAuth.currentUser?.let { saveUser(it, isNewUser) }
                             navigateToApp()
                         } else {
                             // todo display a message to the user.
@@ -40,7 +38,7 @@ class AuthViewModel @Inject constructor(private val repository: RunningRepositor
         }
     }
 
-    private fun saveUser(firebaseUser: FirebaseUser) {
+    private fun saveUser(firebaseUser: FirebaseUser, isNewUser: Boolean) {
         with(firebaseUser) {
             if (email != null && displayName != null && photoUrl != null) {
                 val user = User(
@@ -50,7 +48,7 @@ class AuthViewModel @Inject constructor(private val repository: RunningRepositor
                     avatarUrl = photoUrl!!.toString(),
                     weight = null
                 )
-                viewModelScope.launch { repository.addUser(user) }
+                viewModelScope.launch { repository.addUser(user, isNewUser) }
             }
         }
     }
