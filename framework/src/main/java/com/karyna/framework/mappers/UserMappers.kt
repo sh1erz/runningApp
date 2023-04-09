@@ -5,6 +5,7 @@ import com.karyna.core.domain.User as DomainUser
 
 fun userToDomain(user: User) = with(user) {
     DomainUser(
+        id = id,
         email = email,
         name = name,
         avatarUrl = avatarUrl,
@@ -14,7 +15,7 @@ fun userToDomain(user: User) = with(user) {
 
 fun userToDto(user: DomainUser) = with(user) {
     User(
-        id = 0,
+        id = id,
         email = email,
         name = name,
         avatarUrl = avatarUrl,

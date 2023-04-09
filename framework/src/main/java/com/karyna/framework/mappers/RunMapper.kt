@@ -21,7 +21,7 @@ fun runToDomain(run: Run, user: User) = with(run) {
 }
 
 fun runInputToDto(
-    userId: Long,
+    userId: String,
     date: String,
     location: LocationShort,
     coordinates: List<LatLng>,

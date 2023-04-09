@@ -21,7 +21,7 @@ interface RunningRepository {
 
     //MAP
     suspend fun saveRun(
-        userEmail: String,
+        userId: String,
         date: String,
         location: LocationShort,
         coordinates: List<LatLng>,

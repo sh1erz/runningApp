@@ -2,7 +2,7 @@ package com.karyna.framework.local.datasources
 
 import android.database.sqlite.SQLiteException
 import com.karyna.core.data.Result
-import com.karyna.core.data.datasources.RunDataSource
+import com.karyna.core.data.datasources.LocalRunDataSource
 import com.karyna.core.domain.LatLng
 import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.run.Run
@@ -14,7 +14,8 @@ import com.karyna.framework.mappers.runInputToDto
 import com.karyna.framework.mappers.runToDomain
 import javax.inject.Inject
 
-class LocalRunDataSource @Inject constructor(private val runDao: RunDao, private val userDao: UserDao) : RunDataSource {
+class LocalRunDataSourceImpl @Inject constructor(private val runDao: RunDao, private val userDao: UserDao) :
+    LocalRunDataSource {
     override fun getRun(id: Long): Result<Run?> = try {
         val run = runDao.getRun(id)
         val user = run?.userId?.let { userDao.getUser(it) }
@@ -27,8 +28,8 @@ class LocalRunDataSource @Inject constructor(private val runDao: RunDao, private
         Result.Failure(ex)
     }
 
-    override fun getRunsShort(userEmail: String): Result<List<Run>> = try {
-        val user = userDao.getUser(userEmail)
+    override fun getRunsShort(userId: String): Result<List<Run>> = try {
+        val user = userDao.getUser(userId)
         val runs = user?.id?.let { runDao.getRunsShort(it) }
         if (runs != null) {
             Result.Success(runs.map { runToDomain(it, user) })
@@ -44,7 +45,7 @@ class LocalRunDataSource @Inject constructor(private val runDao: RunDao, private
     }
 
     override fun saveRun(
-        userEmail: String,
+        userId: String,
         date: String,
         location: LocationShort,
         coordinates: List<LatLng>,
@@ -53,9 +54,6 @@ class LocalRunDataSource @Inject constructor(private val runDao: RunDao, private
         paceMetersInS: Int,
         calories: Int?
     ): Result<Unit> = try {
-        val userId = userDao.getUser(userEmail)?.id
-            ?: throw EntryDoesNotExists("No user with email $userEmail")
-
         runDao.insertRun(
             runInputToDto(
                 userId = userId,

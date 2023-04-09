@@ -1,7 +1,8 @@
 package com.karyna.core.data
 
-import com.karyna.core.data.datasources.RunDataSource
-import com.karyna.core.data.datasources.UserDataSource
+import com.karyna.core.data.datasources.LocalRunDataSource
+import com.karyna.core.data.datasources.LocalUserDataSource
+import com.karyna.core.data.datasources.RemoteUserDataSource
 import com.karyna.core.domain.LatLng
 import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
@@ -14,11 +15,12 @@ import javax.inject.Singleton
 
 @Singleton
 class RunningRepositoryImpl @Inject constructor(
-    private val localRunDataSource: RunDataSource,
-    private val localUserDataSource: UserDataSource
-//    remoteRunDataSource: RunDataSource,
+    private val localRunDataSource: LocalRunDataSource,
+    private val localUserDataSource: LocalUserDataSource,
+    private val remoteUserDataSource: RemoteUserDataSource,
 ) : RunningRepository {
     override suspend fun addUser(user: User): Result<Unit> = withContext(Dispatchers.IO) {
+        remoteUserDataSource.addUser(user)
         localUserDataSource.addUser(user)
     }
 
@@ -40,7 +42,7 @@ class RunningRepositoryImpl @Inject constructor(
         }
 
     override suspend fun saveRun(
-        userEmail: String,
+        userId: String,
         date: String,
         location: LocationShort,
         coordinates: List<LatLng>,
@@ -51,7 +53,7 @@ class RunningRepositoryImpl @Inject constructor(
     ): Result<Unit> = withContext(Dispatchers.IO) {
         //todo: back: move to input class
         localRunDataSource.saveRun(
-            userEmail = userEmail,
+            userId = userId,
             date = date,
             location = location,
             coordinates = coordinates,

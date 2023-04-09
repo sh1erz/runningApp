@@ -75,7 +75,7 @@ class RunningForegroundService : Service() {
         with(_uiState.value) {
             scope.launch {
                 repository.saveRun(
-                    userEmail = user.email,
+                    userId = user.id,
                     date = date.toIsoDate(),
                     location = LocationShort(country = "", city = ""),
                     coordinates = userPath.map { LatLng(it.latitude, it.longitude) },

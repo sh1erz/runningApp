@@ -6,12 +6,12 @@ import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunShort
 
-interface RunDataSource {
+interface LocalRunDataSource {
     fun getRun(id: Long): Result<Run?>
-    fun getRunsShort(userEmail: String): Result<List<Run>>
+    fun getRunsShort(userId: String): Result<List<Run>>
     fun getTopRuns(itemsAmount: Int, lastDays: Int?, country: String?): Result<List<RunShort>>
     fun saveRun(
-        userEmail: String,
+        userId: String,
         date: String,
         location: LocationShort,
         coordinates: List<LatLng>,

@@ -23,7 +23,10 @@ class AuthViewModel @Inject constructor(private val repository: RunningRepositor
                 firebaseAuth.signInWithCredential(firebaseCredential)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            firebaseAuth.currentUser?.let { saveUser(it) }
+                            val isNewUser = task.result.additionalUserInfo?.isNewUser ?: true
+                            if (isNewUser) {
+                                firebaseAuth.currentUser?.let { saveUser(it) }
+                            }
                             navigateToApp()
                         } else {
                             // todo display a message to the user.
@@ -41,6 +44,7 @@ class AuthViewModel @Inject constructor(private val repository: RunningRepositor
         with(firebaseUser) {
             if (email != null && displayName != null && photoUrl != null) {
                 val user = User(
+                    id = uid,
                     email = email!!,
                     name = displayName!!,
                     avatarUrl = photoUrl!!.toString(),

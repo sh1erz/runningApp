@@ -14,6 +14,7 @@ class UserModule {
     fun provideUser(): User = FirebaseAuth.getInstance().currentUser?.run {
         if (email != null && displayName != null && photoUrl != null) {
             User(
+                id = uid,
                 email = email!!,
                 name = displayName!!,
                 avatarUrl = photoUrl!!.toString(),

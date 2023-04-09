@@ -9,7 +9,7 @@ interface RunDao {
     fun getRun(id: Long): Run?
 
     @Query("SELECT * FROM run WHERE userId=:userId")
-    fun getRunsShort(userId: Long): List<Run>
+    fun getRunsShort(userId: String): List<Run>
 
     @Insert
     fun insertRun(run: Run)

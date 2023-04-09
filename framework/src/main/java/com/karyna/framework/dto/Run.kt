@@ -26,7 +26,7 @@ data class Run(
     val location: LocationShort,
     @ColumnInfo(name = "userId", index = true)
     @SerializedName("userId")
-    val userId: Long,
+    val userId: String,
     @ColumnInfo(name = "coordinates")
     @SerializedName("coordinates")
     val coordinates: ArrayList<LatLng>,
