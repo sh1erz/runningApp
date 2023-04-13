@@ -6,15 +6,19 @@ import com.google.firebase.ktx.Firebase
 import com.karyna.core.data.Result
 import com.karyna.core.data.datasources.RemoteRunDataSource
 import com.karyna.core.data.datasources.RemoteUserDataSource
+import com.karyna.core.domain.LatLng
+import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunInput
+import com.karyna.framework.BuildConfig
 import com.karyna.framework.mappers.runInputToDomain
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
-class RemoteDataSourceImpl @Inject constructor() : RemoteUserDataSource, RemoteRunDataSource {
+class RemoteDataSourceImpl @Inject constructor(private val googleMapsGeoApi: RemoteAPI) : RemoteUserDataSource,
+    RemoteRunDataSource {
     private val db by lazy { Firebase.firestore }
     override suspend fun getUser(userEmail: String): Result<User> {
         TODO("Not yet implemented")
@@ -47,6 +51,21 @@ class RemoteDataSourceImpl @Inject constructor() : RemoteUserDataSource, RemoteR
     } catch (ex: FirebaseFirestoreException) {
         Result.Failure(ex)
     }
+
+    override suspend fun getLocationShort(latLng: LatLng): Result<LocationShort> = try {
+        val location = googleMapsGeoApi.getLocation(getGeocodingUrl(latLng))
+        val city =
+            location.results.first { it.types.contains("locality") }.address_components.first { it.types.contains("locality") }.long_name
+        val country =
+            location.results.first { it.types.contains("country") }.address_components.first { it.types.contains("country") }.long_name
+        Result.Success(LocationShort(country = country, city = city))
+    } catch (ex: Exception) {
+        Timber.e(ex)
+        Result.Failure()
+    }
+
+    private fun getGeocodingUrl(latLng: LatLng) =
+        "https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.lat},${latLng.lng}&result_type=country|locality&key=${BuildConfig.MAPS_API_KEY}"
 
     private companion object {
         const val USERS_COLLECTION = "users"

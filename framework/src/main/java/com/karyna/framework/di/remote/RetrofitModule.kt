@@ -1,6 +1,7 @@
 package com.karyna.framework.di.remote
 
 import com.google.gson.Gson
+import com.karyna.framework.remote.RemoteAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,10 +33,15 @@ class RetrofitModule {
         gson: Gson
     ): Retrofit {
         return Retrofit.Builder()
-            //firebase db
-            .baseUrl("")
+            .baseUrl("https://maps.googleapis.com/maps/api/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideRemoteApi(
+        retrofit: Retrofit
+    ): RemoteAPI = retrofit.create(RemoteAPI::class.java)
 }

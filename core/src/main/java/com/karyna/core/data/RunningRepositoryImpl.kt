@@ -4,6 +4,8 @@ import com.karyna.core.data.datasources.LocalRunDataSource
 import com.karyna.core.data.datasources.LocalUserDataSource
 import com.karyna.core.data.datasources.RemoteRunDataSource
 import com.karyna.core.data.datasources.RemoteUserDataSource
+import com.karyna.core.domain.LatLng
+import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunInput
@@ -53,5 +55,9 @@ class RunningRepositoryImpl @Inject constructor(
         } else {
             Result.Failure((result as? Result.Failure)?.throwable)
         }
+    }
+
+    override suspend fun getLocationShort(latLng: LatLng): Result<LocationShort> = withContext(Dispatchers.IO) {
+        remoteRunDataSource.getLocationShort(latLng)
     }
 }

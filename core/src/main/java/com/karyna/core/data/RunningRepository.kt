@@ -1,5 +1,7 @@
 package com.karyna.core.data
 
+import com.karyna.core.domain.LatLng
+import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunInput
@@ -20,4 +22,7 @@ interface RunningRepository {
 
     //MAP
     suspend fun saveRun(runInput: RunInput): Result<Unit>
+
+    suspend fun getLocationShort(latLng: LatLng): Result<LocationShort>
+
 }

@@ -9,7 +9,6 @@ import androidx.core.app.NotificationCompat
 import com.karyna.core.data.Result
 import com.karyna.core.data.RunningRepository
 import com.karyna.core.domain.LatLng
-import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
 import com.karyna.core.domain.run.RunInput
 import com.karyna.feature.core.utils.StringFormatter
@@ -74,31 +73,12 @@ class RunningForegroundService : Service() {
 
     fun finishRun() {
         finishTimer()
-        with(_uiState.value) {
-            scope.launch {
-                val result = repository.saveRun(
-                    RunInput(
-                        userId = user.id,
-                        userName = user.name,
-                        date = date.toIsoDate(),
-                        //todo location
-                        location = LocationShort(country = "", city = ""),
-                        coordinates = userPath.map { LatLng(it.latitude, it.longitude) },
-                        durationS = runDurationS,
-                        distanceMeters = distanceM,
-                        paceMetersInS = if (runDurationS <= 0) 0 else (distanceM / runDurationS).toInt(),
-                        //todo calories
-                        calories = null
-                    )
-                )
-                if (result is Result.Failure) {
-                    Timber.e(result.throwable)
-                }
-            }
+        scope.launch {
+            saveRun()
+            _uiState.value = RunUiInfo.EMPTY
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
         }
-        _uiState.value = RunUiInfo.EMPTY
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
     }
 
     private fun observeLocation() = with(locationProvider) {
@@ -161,6 +141,31 @@ class RunningForegroundService : Service() {
     private fun finishTimer() {
         timerJob?.cancel()
     }
+
+    private suspend fun saveRun() =
+        with(_uiState.value) {
+            val locationShort =
+                repository.getLocationShort(userPath.first().run { LatLng(latitude, longitude) })
+            (locationShort as? Result.Success)?.value?.let { location ->
+                val result = repository.saveRun(
+                    RunInput(
+                        userId = user.id,
+                        userName = user.name,
+                        date = date.toIsoDate(),
+                        location = location,
+                        coordinates = userPath.map { LatLng(it.latitude, it.longitude) },
+                        durationS = runDurationS,
+                        distanceMeters = distanceM,
+                        paceMetersInS = if (runDurationS <= 0) 0 else (distanceM / runDurationS).toInt(),
+                        //todo calories
+                        calories = null
+                    )
+                )
+                if (result is Result.Failure) {
+                    Timber.e(result.throwable)
+                }
+            }
+        }
 
     companion object {
         private const val CHANNEL_ID = "CHANNEL_ID"
