@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="important_notifications">Important notifications</string>
+    <string name="n_meters">%d meters</string>
+    <string name="format_meters_in_second">%d m/s</string>
 </resources>

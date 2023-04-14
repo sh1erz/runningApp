@@ -8,6 +8,7 @@ import com.karyna.core.domain.run.RunInput
 
 interface RemoteRunDataSource {
     suspend fun getRun(id: String): Result<Run>
+    suspend fun getRuns(userId: String): Result<List<Run>>
     suspend fun saveRun(runInput: RunInput): Result<String>
     suspend fun getLocationShort(latLng: LatLng): Result<LocationShort>
 

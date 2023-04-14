@@ -9,7 +9,7 @@ import com.karyna.core.domain.run.RunShort
 import com.karyna.framework.local.EntryDoesNotExists
 import com.karyna.framework.local.dao.RunDao
 import com.karyna.framework.local.dao.UserDao
-import com.karyna.framework.mappers.runInputToDto
+import com.karyna.framework.mappers.runInputToRun
 import com.karyna.framework.mappers.runToDomain
 import timber.log.Timber
 import javax.inject.Inject
@@ -28,9 +28,9 @@ class LocalRunDataSourceImpl @Inject constructor(private val runDao: RunDao, pri
         Result.Failure(ex)
     }
 
-    override suspend fun getRunsShort(userId: String): Result<List<Run>> = try {
+    override suspend fun getRuns(userId: String): Result<List<Run>> = try {
         val user = userDao.getUser(userId)
-        val runs = user?.id?.let { runDao.getRunsShort(it) }
+        val runs = user?.id?.let { runDao.getRuns(it) }
         if (runs != null) {
             Result.Success(runs.map { runToDomain(it, user) })
         } else {
@@ -48,7 +48,7 @@ class LocalRunDataSourceImpl @Inject constructor(private val runDao: RunDao, pri
         id: String,
         runInput: RunInput
     ): Result<Unit> = try {
-        runDao.insertRun(runInputToDto(id, runInput))
+        runDao.insertRun(runInputToRun(id, runInput))
         Result.Success(Unit)
     } catch (ex: SQLiteException) {
         Timber.e(ex)

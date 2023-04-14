@@ -1,19 +1,19 @@
 package com.karyna.framework.local.dao
 
 import androidx.room.*
-import com.karyna.framework.dto.Run
+import com.karyna.framework.dto.LocalRun
 
 @Dao
 interface RunDao {
     @Query("SELECT * FROM run WHERE id=:id")
-    fun getRun(id: Long): Run?
+    fun getRun(id: Long): LocalRun?
 
     @Query("SELECT * FROM run WHERE userId=:userId")
-    fun getRunsShort(userId: String): List<Run>
+    fun getRuns(userId: String): List<LocalRun>
 
     @Insert
-    fun insertRun(run: Run)
+    fun insertRun(localRun: LocalRun)
 
     @Delete
-    fun deleteRun(run: Run)
+    fun deleteRun(localRun: LocalRun)
 }

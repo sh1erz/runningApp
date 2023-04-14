@@ -15,9 +15,8 @@
         android:id="@+id/socialFragment"
         android:label="Social" />
 
-    <fragment
-        android:id="@+id/personalFragment"
-        android:label="Personal" />
+    <include app:graph="@navigation/personal_nav_graph" />
+
     <include app:graph="@navigation/map_nav_graph" />
     <action
         android:id="@+id/action_global_loginFragment"

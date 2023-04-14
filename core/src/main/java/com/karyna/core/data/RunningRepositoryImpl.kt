@@ -29,15 +29,18 @@ class RunningRepositoryImpl @Inject constructor(
         localUserDataSource.addUser(user)
     }
 
-    override suspend fun getRun(userEmail: String): Result<Run> = withContext(Dispatchers.IO) {
+    override suspend fun getRun(userId: String): Result<Run> = withContext(Dispatchers.IO) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getRunsShort(userEmail: String): Result<List<Run>> = withContext(Dispatchers.IO) {
-        TODO("Not yet implemented")
+    override suspend fun getRuns(userId: String): Result<List<Run>> = withContext(Dispatchers.IO) {
+        val response = remoteRunDataSource.getRuns(userId)
+        if (response is Result.Failure) {
+            localRunDataSource.getRuns(userId)
+        } else response
     }
 
-    override suspend fun getUser(userEmail: String): Result<User> = withContext(Dispatchers.IO) {
+    override suspend fun getUser(userId: String): Result<User> = withContext(Dispatchers.IO) {
         TODO("Not yet implemented")
     }
 

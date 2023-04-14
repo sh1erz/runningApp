@@ -7,7 +7,7 @@ import com.karyna.core.domain.run.RunShort
 
 interface LocalRunDataSource {
     suspend fun getRun(id: Long): Result<Run?>
-    suspend fun getRunsShort(userId: String): Result<List<Run>>
+    suspend fun getRuns(userId: String): Result<List<Run>>
     suspend fun getTopRuns(itemsAmount: Int, lastDays: Int?, country: String?): Result<List<RunShort>>
     suspend fun saveRun(id: String, runInput: RunInput): Result<Unit>
 

@@ -14,7 +14,6 @@ import com.karyna.core.domain.run.RunInput
 import com.karyna.feature.core.utils.StringFormatter
 import com.karyna.feature.core.utils.utils.DateUtils.toIsoDate
 import com.karyna.feature.core.utils.utils.flowRepeatEvery
-import com.karyna.feature.main.R
 import com.karyna.feature.main.map.LocationProvider
 import com.karyna.feature.main.map.RunUiInfo
 import dagger.hilt.android.AndroidEntryPoint
@@ -75,7 +74,6 @@ class RunningForegroundService : Service() {
         finishTimer()
         scope.launch {
             saveRun()
-            _uiState.value = RunUiInfo.EMPTY
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
@@ -90,12 +88,12 @@ class RunningForegroundService : Service() {
         liveDistance.observeForever { distance ->
             distanceM = distance
             _uiState.update {
-                _uiState.value.copy(formattedDistance = StringFormatter.from(R.string.n_meters, distance))
+                _uiState.value.copy(formattedDistance = StringFormatter.from(RCore.string.n_meters, distance))
             }
         }
         livePace.observeForever { pace ->
             _uiState.update {
-                _uiState.value.copy(formattedPace = StringFormatter.from(R.string.format_meters_in_second, pace))
+                _uiState.value.copy(formattedPace = StringFormatter.from(RCore.string.format_meters_in_second, pace))
             }
         }
     }
@@ -129,7 +127,6 @@ class RunningForegroundService : Service() {
     private fun startTimer() {
         timerJob = scope.launch(Dispatchers.Main) {
             flowRepeatEvery(1000).collectLatest {
-                Timber.d("Duration: $runDurationS")
                 runDurationS += 1
                 _uiState.update {
                     _uiState.value.copy(duration = DateUtils.formatElapsedTime(runDurationS))

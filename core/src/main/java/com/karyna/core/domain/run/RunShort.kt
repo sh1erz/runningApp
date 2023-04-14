@@ -4,10 +4,11 @@ import com.karyna.core.domain.LocationShort
 
 data class RunShort(
     val id: Long,
+    val userId: String,
+    val userName: String,
     val date: String,
     val location: LocationShort,
-    val userName: String,
-    val durationMs: Long,
+    val durationS: Long,
     val distanceMeters: Int,
     val paceMetersInS: Int
 )

@@ -1,6 +1,7 @@
 package com.karyna.framework.remote
 
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.karyna.core.data.Result
@@ -12,7 +13,9 @@ import com.karyna.core.domain.User
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunInput
 import com.karyna.framework.BuildConfig
-import com.karyna.framework.mappers.runInputToDomain
+import com.karyna.framework.dto.RemoteRun
+import com.karyna.framework.mappers.remoteRunInputToDomain
+import com.karyna.framework.mappers.runInputToDto
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
@@ -38,17 +41,33 @@ class RemoteDataSourceImpl @Inject constructor(private val googleMapsGeoApi: Rem
     }
 
     override suspend fun getRun(id: String): Result<Run> = try {
-        val runInput = db.collection(RUNS_COLLECTION).document(id).get().await().toObject(RunInput::class.java)
-        runInput?.let { Result.Success(runInputToDomain(id, it)) }
+        val runInput = db.collection(RUNS_COLLECTION).document(id).get().await().toObject(RemoteRun::class.java)
+        runInput?.let { Result.Success(remoteRunInputToDomain(id, it)) }
             ?: Result.Failure(NullPointerException("RunInput for document $id was null"))
     } catch (ex: FirebaseFirestoreException) {
+        Timber.e(ex)
+        Result.Failure(ex)
+    }
+
+    override suspend fun getRuns(userId: String): Result<List<Run>> = try {
+        val query = db.collection(RUNS_COLLECTION).whereEqualTo("userId", userId)
+            .orderBy("date", Query.Direction.DESCENDING).get().await()
+        val ids = query.documents.map { it.id }
+        query.documents.map { it.data }
+        val remoteRuns = query.toObjects(RemoteRun::class.java)
+        val runs = ids.zip(remoteRuns).map { remoteRunInputToDomain(it.first, it.second) }
+        Result.Success(runs)
+    } catch (ex: FirebaseFirestoreException) {
+        Timber.e(ex)
         Result.Failure(ex)
     }
 
     override suspend fun saveRun(runInput: RunInput): Result<String> = try {
-        val docId = db.collection(RUNS_COLLECTION).add(runInput).await().id
+        val remoteRunInput = runInputToDto(runInput)
+        val docId = db.collection(RUNS_COLLECTION).add(remoteRunInput).await().id
         Result.Success(docId)
     } catch (ex: FirebaseFirestoreException) {
+        Timber.e(ex)
         Result.Failure(ex)
     }
 

@@ -55,6 +55,7 @@ ext.appDependencies = dependencyGroup {
 
     implementation project(":feature-core")
     implementation project(":feature-main")
+    implementation project(":feature-personal")
 
     commonDeps()
     ui()
@@ -90,7 +91,6 @@ ext.coreDeps = dependencyGroup {
 ext.frameworkDeps = dependencyGroup {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(":core")
-
     implementation 'com.google.firebase:firebase-firestore-ktx:24.4.5'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.1'
     //retrofit
@@ -107,6 +107,8 @@ ext.frameworkDeps = dependencyGroup {
 
 ext.ui = dependencyGroup {
     hiltDeps()
+
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
 
     implementation "androidx.navigation:navigation-fragment-ktx:$navVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navVersion"

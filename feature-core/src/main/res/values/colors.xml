@@ -1,10 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">@color/primary500</color>
+
+    <!-- Main -->
+    <color name="base100">#FFFFFF</color>
+    <color name="base000">#1A1C1C</color>
+
+    <!-- Primary -->
+    <color name="primary100">#C5E5CC</color>
+    <color name="primary200">#9ed4ab</color>
+    <color name="primary300">#75c48a</color>
+    <color name="primary400">#56b871</color>
+    <color name="primary500">#34ab58</color>
+    <color name="primary600">#2c9c4f</color>
+    <color name="primary700">#228b43</color>
+    <color name="primary800">#187a39</color>
+    <color name="primary900">#045b25</color>
+
+    <!-- Secondary -->
+    <color name="secondary100">#e6c3ab</color>
+    <color name="secondary200">#c69e84</color>
+    <color name="secondary300">#a57a5c</color>
+    <color name="secondary400">#8d5f3f</color>
+    <color name="secondary500">#744623</color>
+    <color name="secondary600">#6a3d1d</color>
+    <color name="secondary700">#5a3115</color>
+    <color name="secondary800">#4d240e</color>
+    <color name="secondary900">#3E1700</color>
+
+    <!-- Neutral1 -->
+    <color name="neutral1_100">#FAFAFA</color>
+    <color name="neutral1_200">#F1F1F1</color>
+    <color name="neutral1_300">#D9D9D9</color>
+    <color name="neutral1_400">#C3C3C3</color>
+    <color name="neutral1_500">#B0B0B0</color>
+    <color name="neutral1_600">#9E9E9E</color>
+
+    <!-- Neutral2 -->
+    <color name="neutral2_100">#879C98</color>
+    <color name="neutral2_200">#7B8E8A</color>
+    <color name="neutral2_300">#70817E</color>
+    <color name="neutral2_400">#657672</color>
+    <color name="neutral2_500">#5C6B68</color>
+    <color name="neutral2_600">#54615F</color>
+    <color name="neutral2_700">#4C5856</color>
+    <color name="neutral2_800">#45504E</color>
+    <color name="neutral2_900">#3F4947</color>
+
+    <!-- Neutral3 -->
+    <color name="neutral3_100">#D6EBFF</color>
+    <color name="neutral3_200">#B0D9FF</color>
+    <color name="neutral3_300">#466179</color>
+
+    <!-- Status Positive -->
+    <color name="positive100">#DBF1E6</color>
+    <color name="positive200">#70C29A</color>
+    <color name="positive300">#05944F</color>
+
+    <!-- Status Negative -->
+    <color name="negative100">#F5CDC8</color>
+    <color name="negative200">#EB7364</color>
+    <color name="negative300">#E11900</color>
+    <color name="negative600">#9E1200</color>
+
+    <!-- Status Negative -->
+    <color name="warning100">#FFF2D9</color>
+    <color name="warning200">#DFB86D</color>
+    <color name="warning300">#EF8943</color>
+
 </resources>

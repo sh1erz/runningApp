@@ -13,7 +13,7 @@ import com.karyna.core.domain.LocationShort
         onDelete = ForeignKey.CASCADE
     )]
 )
-data class Run(
+data class LocalRun(
     @PrimaryKey
     @ColumnInfo(name = "id")
     @SerializedName("id")

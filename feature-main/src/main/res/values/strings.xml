@@ -1,6 +1,4 @@
 <resources>
-    <string name="n_meters">%d meters</string>
-    <string name="format_meters_in_second">%d m/s</string>
     <string name="finish_run">Finish run</string>
     <string name="start">Start</string>
     <string name="distance_semicolon">Distance: </string>
