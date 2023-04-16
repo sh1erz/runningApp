@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.request.RequestOptions
 import com.karyna.core.domain.User
-import com.karyna.core.domain.run.RunShort
+import com.karyna.core.domain.run.Run
 import com.karyna.feature.core.utils.base.BaseItemCallback
 import com.karyna.feature.core.utils.base.BaseViewHolder
 import com.karyna.feature.core.utils.utils.extensions.showImage
@@ -16,7 +16,7 @@ import com.karyna.feature.personal.databinding.ItemUserBinding
 import com.karyna.feature.core.R as RCore
 import com.karyna.feature.core.utils.utils.DateUtils as CoreDateUtils
 
-class PersonalAdapter(private val onSettingsClick: () -> Unit) :
+class PersonalAdapter(private val onSettingsClick: () -> Unit, private val onRunClick: (Run) -> Unit) :
     ListAdapter<PersonalItem, BaseViewHolder<*, PersonalItem>>(BaseItemCallback<PersonalItem>()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*, PersonalItem> =
@@ -29,7 +29,8 @@ class PersonalAdapter(private val onSettingsClick: () -> Unit) :
                 ItemListTitleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
             PersonalItemType.RUN_ITEM.ordinal -> RunViewHolder(
-                ItemRunBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ItemRunBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onRunClick
             )
             else -> throw IllegalStateException("Unsupported view type")
         }
@@ -62,15 +63,16 @@ class PersonalAdapter(private val onSettingsClick: () -> Unit) :
         }
     }
 
-    class RunViewHolder(binding: ItemRunBinding) :
+    class RunViewHolder(binding: ItemRunBinding, private val onRunClick: (Run) -> Unit) :
         BaseViewHolder<ItemRunBinding, PersonalItem>(binding) {
         override fun bind(item: PersonalItem) {
-            val runShort = item.data as? RunShort ?: return
+            val run = item.data as? Run ?: return
             with(binding) {
-                tvDistance.text = root.context.getString(RCore.string.n_meters, runShort.distanceMeters)
-                tvDuration.text = DateUtils.formatElapsedTime(runShort.durationS)
-                tvCity.text = runShort.location.city
-                tvDate.text = CoreDateUtils.formatIsoDate(runShort.date)
+                tvDistance.text = root.context.getString(RCore.string.n_meters, run.distanceMeters)
+                tvDuration.text = DateUtils.formatElapsedTime(run.durationS)
+                tvCity.text = run.location.city
+                tvDate.text = CoreDateUtils.formatIsoDate(run.date)
+                root.setOnClickListener { onRunClick(run) }
             }
         }
     }

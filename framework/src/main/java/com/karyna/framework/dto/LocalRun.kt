@@ -6,6 +6,7 @@ import com.karyna.core.domain.LatLng
 import com.karyna.core.domain.LocationShort
 
 @Entity(
+    tableName = "run",
     foreignKeys = [ForeignKey(
         entity = User::class,
         parentColumns = ["id"],

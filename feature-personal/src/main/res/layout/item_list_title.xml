@@ -7,10 +7,11 @@
     <TextView
         android:id="@+id/tvListTitle"
         style="@style/RunningApp.Text.Label.Medium"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
         android:textAllCaps="true"
+        android:background="@color/secondary100"
+        android:padding="16dp"
         tools:text="Title" />
 </FrameLayout>

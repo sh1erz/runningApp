@@ -8,5 +8,14 @@
         android:id="@+id/personalFragment"
         android:name="com.karyna.feature.personal.PersonalFragment"
         android:label="Personal"
-        tools:layout="@layout/fragment_personal" />
+        tools:layout="@layout/fragment_personal">
+        <action
+            android:id="@+id/action_personal_to_runDetails"
+            app:destination="@id/runDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/runDetailsFragment"
+        android:name="com.karyna.feature.personal.run.RunDetailsFragment"
+        android:label="RunDetailsFragment"
+        tools:layout="@layout/fragment_run_details" />
 </navigation>
