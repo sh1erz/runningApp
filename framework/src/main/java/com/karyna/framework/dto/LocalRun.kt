@@ -31,6 +31,9 @@ data class LocalRun(
     @ColumnInfo(name = "userName")
     @SerializedName("userName")
     val userName: String,
+    @ColumnInfo(name = "userAvatarUrl")
+    @SerializedName("userAvatarUrl")
+    val userAvatarUrl: String,
     @ColumnInfo(name = "coordinates")
     @SerializedName("coordinates")
     val coordinates: ArrayList<LatLng>,

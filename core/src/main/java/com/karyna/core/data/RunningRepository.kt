@@ -3,9 +3,9 @@ package com.karyna.core.data
 import com.karyna.core.domain.LatLng
 import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
+import com.karyna.core.domain.run.OrderingMode
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunInput
-import com.karyna.core.domain.run.RunShort
 
 interface RunningRepository {
     //AUTH
@@ -19,7 +19,12 @@ interface RunningRepository {
 
     //SOCIAL
     suspend fun getUser(userId: String): Result<User>
-    suspend fun getTopRuns(amount: Int, lastDays: Int?, country: String?): Result<List<RunShort>>
+    suspend fun getTopRuns(
+        amount: Int,
+        ordering: OrderingMode,
+        isoDateFrom: String,
+        isoDateToExcl: String
+    ): Result<List<Run>>
 
     //MAP
     suspend fun saveRun(runInput: RunInput): Result<Unit>

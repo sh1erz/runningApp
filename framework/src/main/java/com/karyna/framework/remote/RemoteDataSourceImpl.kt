@@ -10,10 +10,12 @@ import com.karyna.core.data.datasources.RemoteUserDataSource
 import com.karyna.core.domain.LatLng
 import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
+import com.karyna.core.domain.run.OrderingMode
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunInput
 import com.karyna.framework.BuildConfig
 import com.karyna.framework.dto.RemoteRun
+import com.karyna.framework.mappers.isoToDate
 import com.karyna.framework.mappers.remoteRunInputToDomain
 import com.karyna.framework.mappers.runInputToDto
 import kotlinx.coroutines.tasks.await
@@ -51,13 +53,37 @@ class RemoteDataSourceImpl @Inject constructor(private val googleMapsGeoApi: Rem
 
     override suspend fun getRuns(userId: String): Result<List<Run>> = try {
         val query = db.collection(RUNS_COLLECTION).whereEqualTo("userId", userId)
-            .orderBy("date", Query.Direction.DESCENDING).get().await()
+            .orderBy(DATE_FIELD, Query.Direction.DESCENDING).get().await()
         val ids = query.documents.map { it.id }
-        query.documents.map { it.data }
         val remoteRuns = query.toObjects(RemoteRun::class.java)
         val runs = ids.zip(remoteRuns).map { remoteRunInputToDomain(it.first, it.second) }
         Result.Success(runs)
     } catch (ex: FirebaseFirestoreException) {
+        Timber.e(ex)
+        Result.Failure(ex)
+    }
+
+    override suspend fun getTopRuns(
+        amount: Int,
+        ordering: OrderingMode,
+        isoDateFrom: String,
+        isoDateTo: String
+    ): Result<List<Run>> = try {
+        val dateFrom = isoToDate(isoDateFrom)
+        val dateTo = isoToDate(isoDateTo)
+        val query = db.collection(RUNS_COLLECTION).whereGreaterThanOrEqualTo(DATE_FIELD, dateFrom)
+            .whereLessThan(DATE_FIELD, dateTo).get().await()
+
+        val ids = query.documents.map { it.id }
+        val remoteRuns = query.toObjects(RemoteRun::class.java)
+
+        val runs = ids.zip(remoteRuns).map { remoteRunInputToDomain(it.first, it.second) }
+        val orderedRuns = when (ordering) {
+            OrderingMode.BY_DISTANCE -> runs.sortedBy { it.distanceMeters }
+            OrderingMode.BY_DURATION -> runs.sortedBy { it.durationS }
+        }
+        Result.Success(orderedRuns.take(amount))
+    } catch (ex: Exception) {
         Timber.e(ex)
         Result.Failure(ex)
     }
@@ -89,5 +115,6 @@ class RemoteDataSourceImpl @Inject constructor(private val googleMapsGeoApi: Rem
     private companion object {
         const val USERS_COLLECTION = "users"
         const val RUNS_COLLECTION = "runs"
+        const val DATE_FIELD = "date"
     }
 }

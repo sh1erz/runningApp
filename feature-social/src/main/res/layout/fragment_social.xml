@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvLeaderboardTitle"
+        style="@style/RunningApp.Text.Paragraph.Large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:text="@string/look_what_others_doing"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDuration"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/duration"
+        app:backgroundTint="@android:color/transparent"
+        app:cornerRadius="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/btnDistance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvLeaderboardTitle"
+        app:strokeColor="@color/colorPrimary"
+        app:strokeWidth="1dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDistance"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/distance"
+        app:backgroundTint="@android:color/transparent"
+        app:cornerRadius="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/btnDuration"
+        app:layout_constraintEnd_toStartOf="@+id/tvFilter"
+        app:layout_constraintStart_toEndOf="@+id/btnDuration"
+        app:layout_constraintTop_toTopOf="@id/btnDuration"
+        app:strokeColor="@color/colorPrimary"
+        app:strokeWidth="1dp" />
+
+    <TextView
+        android:id="@+id/tvFilter"
+        style="@style/RunningApp.Text.Label.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_by_semicolon"
+        app:layout_constraintBottom_toBottomOf="@id/btnDuration"
+        app:layout_constraintEnd_toStartOf="@+id/spinnerTimeFilter"
+        app:layout_constraintStart_toEndOf="@+id/btnDistance"
+        app:layout_constraintTop_toTopOf="@id/btnDuration" />
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/spinnerTimeFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/tvFilter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvFilter"
+        app:layout_constraintTop_toTopOf="@+id/tvFilter" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPersonal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnDuration"
+        tools:listitem="@layout/item_social_run" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

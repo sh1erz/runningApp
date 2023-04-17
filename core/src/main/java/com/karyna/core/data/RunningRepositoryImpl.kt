@@ -7,9 +7,9 @@ import com.karyna.core.data.datasources.RemoteUserDataSource
 import com.karyna.core.domain.LatLng
 import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.User
+import com.karyna.core.domain.run.OrderingMode
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunInput
-import com.karyna.core.domain.run.RunShort
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -44,10 +44,14 @@ class RunningRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getTopRuns(amount: Int, lastDays: Int?, country: String?): Result<List<RunShort>> =
-        withContext(Dispatchers.IO) {
-            TODO("Not yet implemented")
-        }
+    override suspend fun getTopRuns(
+        amount: Int,
+        ordering: OrderingMode,
+        isoDateFrom: String,
+        isoDateToExcl: String
+    ): Result<List<Run>> = withContext(Dispatchers.IO) {
+        remoteRunDataSource.getTopRuns(amount, ordering, isoDateFrom, isoDateToExcl)
+    }
 
     override suspend fun saveRun(
         runInput: RunInput

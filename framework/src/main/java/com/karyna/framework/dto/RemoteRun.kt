@@ -5,6 +5,7 @@ import com.google.firebase.Timestamp
 data class RemoteRun(
     val userId: String = "",
     val userName: String = "",
+    val userAvatarUrl: String = "",
     val date: Timestamp = Timestamp.now(),
     val locationCountry: String = "",
     val locationCity: String = "",

@@ -7,6 +7,7 @@ data class Run(
     val id: String,
     val userId: String,
     val userName: String,
+    val userAvatarUrl: String,
     val date: String,
     val location: LocationShort,
     //run characteristics

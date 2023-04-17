@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/ivAvatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_baseline_person_24" />
+
+    <TextView
+        android:id="@+id/tvName"
+        style="@style/RunningApp.Text.Paragraph.Medium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/ivAvatar"
+        app:layout_constraintTop_toBottomOf="@id/ivAvatar"
+        tools:text="1234567899eeee" />
+
+    <TextView
+        android:id="@+id/tvDate"
+        style="@style/RunningApp.Text.Label.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="8dp"
+        android:textColor="@color/neutral2_700"
+        app:layout_constraintBottom_toBottomOf="@+id/tvDuration"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guideline_country"
+        app:layout_constraintTop_toTopOf="@+id/tvDuration"
+        tools:text="01.01.2023" />
+
+
+    <TextView
+        android:id="@+id/tvCity"
+        style="@style/RunningApp.Text.Label.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        android:textColor="@color/neutral2_700"
+        app:layout_constraintBottom_toBottomOf="@+id/tvDistance"
+        app:layout_constraintStart_toStartOf="@+id/tvDate"
+        app:layout_constraintTop_toTopOf="@+id/tvDistance"
+        tools:text="Dnipro" />
+
+    <TextView
+        android:id="@+id/tvDuration"
+        style="@style/RunningApp.Text.Paragraph.Medium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        android:layout_marginStart="16dp"
+        android:drawablePadding="2dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        app:drawableStartCompat="@drawable/ic_time"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_country"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Duration: 1s" />
+
+    <TextView
+        android:id="@+id/tvDistance"
+        style="@style/RunningApp.Text.Paragraph.Medium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        android:drawablePadding="2dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        app:drawableStartCompat="@drawable/ic_run"
+        app:layout_constraintBottom_toBottomOf="@+id/tvName"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_country"
+        app:layout_constraintStart_toStartOf="@+id/tvDuration"
+        app:layout_constraintTop_toTopOf="@+id/tvName"
+        tools:text="Distance: 10m" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.30" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_country"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.7" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

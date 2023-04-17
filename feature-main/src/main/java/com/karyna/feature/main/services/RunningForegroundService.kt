@@ -148,6 +148,7 @@ class RunningForegroundService : Service() {
                     RunInput(
                         userId = user.id,
                         userName = user.name,
+                        userAvatarUrl = user.avatarUrl,
                         date = date.toIsoDate(),
                         location = location,
                         coordinates = userPath.map { LatLng(it.latitude, it.longitude) },

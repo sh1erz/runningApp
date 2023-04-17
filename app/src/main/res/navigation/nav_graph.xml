@@ -11,16 +11,17 @@
             android:id="@+id/action_loginFragment_to_map"
             app:destination="@id/map_nav_graph" />
     </fragment>
-    <fragment
-        android:id="@+id/socialFragment"
-        android:label="Social" />
 
-    <include app:graph="@navigation/personal_nav_graph" />
-
-    <include app:graph="@navigation/map_nav_graph" />
     <action
         android:id="@+id/action_global_loginFragment"
         app:destination="@id/loginFragment"
         app:popUpTo="@id/loginFragment"
         app:popUpToInclusive="true" />
+
+    <include app:graph="@navigation/social_nav_graph" />
+
+    <include app:graph="@navigation/personal_nav_graph" />
+
+    <include app:graph="@navigation/map_nav_graph" />
+
 </navigation>
