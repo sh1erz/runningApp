@@ -79,8 +79,8 @@ class RemoteDataSourceImpl @Inject constructor(private val googleMapsGeoApi: Rem
 
         val runs = ids.zip(remoteRuns).map { remoteRunInputToDomain(it.first, it.second) }
         val orderedRuns = when (ordering) {
-            OrderingMode.BY_DISTANCE -> runs.sortedBy { it.distanceMeters }
-            OrderingMode.BY_DURATION -> runs.sortedBy { it.durationS }
+            OrderingMode.BY_DISTANCE -> runs.sortedByDescending { it.distanceMeters }
+            OrderingMode.BY_DURATION -> runs.sortedByDescending { it.durationS }
         }
         Result.Success(orderedRuns.take(amount))
     } catch (ex: Exception) {

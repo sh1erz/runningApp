@@ -18,26 +18,29 @@ import javax.inject.Inject
 @HiltViewModel
 class SocialViewModel @Inject constructor(private val repository: RunningRepository) : BaseViewModel() {
 
-
     val orderingMode: LiveData<OrderingMode> get() = _orderingMode
-    val filteringMode: LiveData<FilteringMode> get() = _filteringMode
     val topRuns: LiveData<List<Run>> get() = _topRuns
-
+    private var filteringMode: FilteringMode = FilteringMode.TODAY
 
     private val _orderingMode: MutableLiveData<OrderingMode> = MutableLiveData(OrderingMode.BY_DISTANCE)
-    private val _filteringMode: MutableLiveData<FilteringMode> = MutableLiveData(FilteringMode.TODAY)
     private val _topRuns: MutableLiveData<List<Run>> = MutableLiveData()
 
     fun loadTopRuns() {
-        loadTopRuns(requireNotNull(_orderingMode.value), requireNotNull(_filteringMode.value))
+        loadTopRuns(requireNotNull(_orderingMode.value), filteringMode)
     }
 
-    fun setFilteringMode() {
-
+    fun updateOrderingMode(orderingMode: OrderingMode) {
+        if (_orderingMode.value != orderingMode) {
+            _orderingMode.value = orderingMode
+            loadTopRuns(orderingMode, filteringMode)
+        }
     }
 
-    fun changeOrderingMode() {
-
+    fun updateFilteringMode(filteringMode: FilteringMode) {
+        if (this.filteringMode != filteringMode) {
+            this.filteringMode = filteringMode
+            loadTopRuns(requireNotNull(_orderingMode.value), filteringMode)
+        }
     }
 
     private fun loadTopRuns(orderingMode: OrderingMode, filteringMode: FilteringMode) {

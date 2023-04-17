@@ -10,7 +10,6 @@
         style="@style/RunningApp.Text.Label.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_marginHorizontal="16dp"
         android:layout_marginVertical="8dp"
         android:textColor="@color/neutral2_700"
@@ -54,16 +53,15 @@
         android:drawablePadding="2dp"
         android:gravity="center"
         app:drawableStartCompat="@drawable/ic_run"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintStart_toStartOf="@+id/tvDuration"
         app:layout_constraintTop_toBottomOf="@+id/tvDuration"
         tools:text="Distance: 10m" />
 
-</androidx.constraintlayout.widget.ConstraintLayout><!--val id: Long,
-    val userId: String,
-    val userName: String,
-    val date: String,
-    val location: LocationShort,
-    val durationS: Long,
-    val distanceMeters: Int,
-    val paceMetersInS: Int-->
+    <View
+        android:id="@+id/separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/neutral1_200"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
