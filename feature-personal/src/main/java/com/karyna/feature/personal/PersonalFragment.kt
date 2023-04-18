@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import androidx.navigation.navGraphViewModels
 import com.karyna.feature.core.utils.base.BaseFragment
 import com.karyna.feature.personal.databinding.FragmentPersonalBinding
 import com.karyna.feature.personal.list.PersonalAdapter
@@ -16,7 +16,7 @@ class PersonalFragment : BaseFragment<FragmentPersonalBinding, PersonalViewModel
 
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentPersonalBinding =
         { layoutInflater, viewGroup, b -> FragmentPersonalBinding.inflate(layoutInflater, viewGroup, b) }
-    override val viewModel: PersonalViewModel by viewModels()
+    override val viewModel: PersonalViewModel by navGraphViewModels(R.id.personal_nav_graph) { defaultViewModelProviderFactory }
     private val adapter by lazy { PersonalAdapter({}, onRunClick = viewModel::navigateToRunDetails) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

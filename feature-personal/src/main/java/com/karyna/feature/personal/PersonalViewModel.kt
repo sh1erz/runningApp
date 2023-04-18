@@ -21,7 +21,8 @@ class PersonalViewModel @Inject constructor(private val repository: RunningRepos
     val personalItems: LiveData<List<PersonalItem>> get() = _personalItems
     private val _personalItems = MutableLiveData<List<PersonalItem>>(emptyList())
 
-    private var chosenRun: Run? = null
+    var chosenRun: Run? = null
+        private set
 
     fun loadListInfo() {
         viewModelScope.launch {

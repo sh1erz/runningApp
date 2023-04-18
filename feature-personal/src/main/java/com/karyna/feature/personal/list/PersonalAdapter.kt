@@ -10,6 +10,8 @@ import com.karyna.core.domain.run.Run
 import com.karyna.feature.core.utils.base.BaseItemCallback
 import com.karyna.feature.core.utils.base.BaseViewHolder
 import com.karyna.feature.core.utils.utils.extensions.showImage
+import com.karyna.feature.core.utils.utils.extensions.string
+import com.karyna.feature.personal.R
 import com.karyna.feature.personal.databinding.ItemListTitleBinding
 import com.karyna.feature.personal.databinding.ItemRunBinding
 import com.karyna.feature.personal.databinding.ItemUserBinding
@@ -68,8 +70,11 @@ class PersonalAdapter(private val onSettingsClick: () -> Unit, private val onRun
         override fun bind(item: PersonalItem) {
             val run = item.data as? Run ?: return
             with(binding) {
-                tvDistance.text = root.context.getString(RCore.string.n_meters, run.distanceMeters)
-                tvDuration.text = DateUtils.formatElapsedTime(run.durationS)
+                tvDistance.text = string(
+                    R.string.distance_formatted,
+                    string(RCore.string.n_meters, run.distanceMeters)
+                )
+                tvDuration.text = string(R.string.duration_formatted, DateUtils.formatElapsedTime(run.durationS))
                 tvCity.text = run.location.city
                 tvDate.text = CoreDateUtils.formatIsoDate(run.date)
                 root.setOnClickListener { onRunClick(run) }

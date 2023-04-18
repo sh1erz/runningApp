@@ -2,4 +2,11 @@
     <string name="avatar">avatar</string>
     <string name="settings">settings</string>
     <string name="your_runs">Your runs</string>
+    <string name="back">Back</string>
+    <string name="map">Map</string>
+    <string name="run_details">Run details</string>
+    <string name="location_formatted">%s, %s</string>
+    <string name="duration_formatted">Duration: %s</string>
+    <string name="distance_formatted">Distance: %s</string>
+    <string name="calories_formatted">Calories burned: %d</string>
 </resources>
