@@ -160,7 +160,7 @@ class RunningForegroundService : Service() {
                         coordinates = userPath.map { LatLng(it.latitude, it.longitude) },
                         durationS = runDurationS,
                         distanceMeters = distanceM,
-                        paceMetersInS = if (runDurationS <= 0) 0 else (distanceM / runDurationS).toInt(),
+                        paceMetersInS = if (runDurationS <= 0) 0f else (distanceM / runDurationS.toFloat()),
                         calories = user.weight?.let { calculateKCaloriesBurned(it, distanceM) }
                     )
                 )

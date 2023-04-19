@@ -8,5 +8,6 @@
     <string name="location_formatted">%s, %s</string>
     <string name="duration_formatted">Duration: %s</string>
     <string name="distance_formatted">Distance: %s</string>
-    <string name="calories_formatted">Calories burned: %d</string>
+    <string name="pace_formatted">Average pace: %s m/s</string>
+    <string name="calories_formatted">Calories burned: %d kCal</string>
 </resources>

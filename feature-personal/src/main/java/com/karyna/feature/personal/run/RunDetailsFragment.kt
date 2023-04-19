@@ -81,6 +81,7 @@ class RunDetailsFragment : BaseFragment<FragmentRunDetailsBinding, PersonalViewM
         tvLocation.text = getString(R.string.location_formatted, run.location.city, run.location.country)
         tvDistance.text = string(R.string.distance_formatted, string(RCore.string.n_meters, run.distanceMeters))
         tvDuration.text = string(R.string.duration_formatted, DateUtils.formatElapsedTime(run.durationS))
+        tvPace.text = string(R.string.pace_formatted, run.paceMetersInS)
         tvDate.text = CoreDateUtils.formatIsoDate(run.date)
         if (run.calories != null) {
             tvCalories.text = string(R.string.calories_formatted, run.calories!!)

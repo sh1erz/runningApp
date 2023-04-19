@@ -83,7 +83,7 @@
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="1"
-        app:drawableStartCompat="@drawable/ic_run"
+        app:drawableStartCompat="@drawable/ic_route"
         app:layout_constraintBottom_toBottomOf="@+id/tvName"
         app:layout_constraintEnd_toStartOf="@+id/guideline_country"
         app:layout_constraintStart_toStartOf="@+id/tvDuration"

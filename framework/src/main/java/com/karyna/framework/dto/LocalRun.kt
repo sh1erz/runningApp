@@ -45,7 +45,7 @@ data class LocalRun(
     val distanceMeters: Int,
     @ColumnInfo(name = "pace")
     @SerializedName("pace")
-    val paceMetersInS: Int,
+    val paceMetersInS: Float,
     @ColumnInfo(name = "calories")
     @SerializedName("calories")
     val calories: Int?

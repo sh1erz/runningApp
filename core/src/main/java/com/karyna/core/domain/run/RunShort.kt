@@ -10,5 +10,5 @@ data class RunShort(
     val location: LocationShort,
     val durationS: Long,
     val distanceMeters: Int,
-    val paceMetersInS: Int
+    val paceMetersInS: Float
 )

@@ -13,6 +13,6 @@ data class RemoteRun(
     val coordinates: String = "",
     val durationS: Long = 0,
     val distanceMeters: Int = 0,
-    val paceMetersInS: Int = 0,
+    val paceMetersInS: Float = 0f,
     val calories: Int? = null
 )

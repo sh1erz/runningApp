@@ -13,6 +13,6 @@ data class RunInput(
     val coordinates: List<LatLng>,
     val durationS: Long,
     val distanceMeters: Int,
-    val paceMetersInS: Int,
+    val paceMetersInS: Float,
     val calories: Int?
 )
