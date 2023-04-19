@@ -15,8 +15,10 @@ import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunInput
 import com.karyna.framework.BuildConfig
 import com.karyna.framework.dto.RemoteRun
+import com.karyna.framework.dto.RemoteUser
 import com.karyna.framework.mappers.isoToDate
 import com.karyna.framework.mappers.remoteRunInputToDomain
+import com.karyna.framework.mappers.remoteUserToDomain
 import com.karyna.framework.mappers.runInputToDto
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -25,8 +27,14 @@ import javax.inject.Inject
 class RemoteDataSourceImpl @Inject constructor(private val googleMapsGeoApi: RemoteAPI) : RemoteUserDataSource,
     RemoteRunDataSource {
     private val db by lazy { Firebase.firestore }
-    override suspend fun getUser(userEmail: String): Result<User> {
-        TODO("Not yet implemented")
+
+    override suspend fun getUser(userId: String): Result<User> = try {
+        val remoteUser = db.collection(USERS_COLLECTION).whereEqualTo("id", userId).get()
+            .await().toObjects(RemoteUser::class.java).first()
+        Result.Success(remoteUserToDomain(remoteUser))
+    } catch (ex: Exception) {
+        Timber.e(ex)
+        Result.Failure(ex)
     }
 
     override suspend fun addUser(user: User) {

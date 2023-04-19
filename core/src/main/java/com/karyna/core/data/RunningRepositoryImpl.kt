@@ -41,7 +41,10 @@ class RunningRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getUser(userId: String): Result<User> = withContext(Dispatchers.IO) {
-        TODO("Not yet implemented")
+        val result = remoteUserDataSource.getUser(userId)
+        if (result is Result.Success) {
+            result
+        } else localUserDataSource.getUser(userId)
     }
 
     override suspend fun getTopRuns(

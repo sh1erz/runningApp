@@ -6,4 +6,6 @@
     <string name="training">Training</string>
     <string name="personal">Personal</string>
     <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="specify_weight_optional">Specify weight (Optional)</string>
+    <string name="enter_your_weight">Enter your weight</string>
 </resources>

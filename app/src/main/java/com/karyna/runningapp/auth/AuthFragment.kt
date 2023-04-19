@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -57,7 +58,16 @@ class AuthFragment : BaseFragment<FragmentAuthBinding, AuthViewModel>() {
         super.onViewCreated(view, savedInstanceState)
 
         oneTapClient = Identity.getSignInClient(requireActivity())
-        binding.btnGoogleSignIn.setOnClickListener { auth() }
+        setListeners()
+    }
+
+    private fun setListeners() {
+        with(binding) {
+            btnGoogleSignIn.setOnClickListener { auth() }
+            etWeight.addTextChangedListener(afterTextChanged = { text ->
+                viewModel.onWeightChanged(text?.toString())
+            })
+        }
     }
 
     private fun auth() {

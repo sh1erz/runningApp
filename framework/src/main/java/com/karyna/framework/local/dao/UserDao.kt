@@ -1,17 +1,17 @@
 package com.karyna.framework.local.dao
 
 import androidx.room.*
-import com.karyna.framework.dto.User
+import com.karyna.framework.dto.LocalUser
 
 @Dao
 interface UserDao {
 
     @Query("SELECT * FROM user WHERE id LIKE '%' || :id || '%'")
-    fun getUser(id: String): User?
+    fun getUser(id: String): LocalUser?
 
     @Insert
-    fun insertUser(user: User)
+    fun insertUser(user: LocalUser)
 
     @Delete
-    fun deleteUser(user: User)
+    fun deleteUser(user: LocalUser)
 }

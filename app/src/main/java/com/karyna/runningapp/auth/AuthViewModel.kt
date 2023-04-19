@@ -15,6 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val repository: RunningRepository) : BaseViewModel() {
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var weightInput: String? = null
 
     fun processGoogleIdToken(googleIdToken: String?) {
         when {
@@ -38,6 +39,10 @@ class AuthViewModel @Inject constructor(private val repository: RunningRepositor
         }
     }
 
+    fun onWeightChanged(input: String?) {
+        weightInput = input
+    }
+
     private fun saveUser(firebaseUser: FirebaseUser, isNewUser: Boolean) {
         with(firebaseUser) {
             if (email != null && displayName != null && photoUrl != null) {
@@ -46,7 +51,7 @@ class AuthViewModel @Inject constructor(private val repository: RunningRepositor
                     email = email!!,
                     name = displayName!!,
                     avatarUrl = photoUrl!!.toString(),
-                    weight = null
+                    weight = weightInput?.toFloatOrNull()
                 )
                 viewModelScope.launch { repository.addUser(user, isNewUser) }
             }

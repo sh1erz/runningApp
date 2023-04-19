@@ -1,9 +1,10 @@
 package com.karyna.framework.mappers
 
-import com.karyna.framework.dto.User
+import com.karyna.framework.dto.LocalUser
+import com.karyna.framework.dto.RemoteUser
 import com.karyna.core.domain.User as DomainUser
 
-fun userToDomain(user: User) = with(user) {
+fun localUserToDomain(user: LocalUser) = with(user) {
     DomainUser(
         id = id,
         email = email,
@@ -13,8 +14,18 @@ fun userToDomain(user: User) = with(user) {
     )
 }
 
-fun userToDto(user: DomainUser) = with(user) {
-    User(
+fun domainUserToLocal(user: DomainUser) = with(user) {
+    LocalUser(
+        id = id,
+        email = email,
+        name = name,
+        avatarUrl = avatarUrl,
+        weight = weight
+    )
+}
+
+fun remoteUserToDomain(user: RemoteUser) = with(user) {
+    DomainUser(
         id = id,
         email = email,
         name = name,

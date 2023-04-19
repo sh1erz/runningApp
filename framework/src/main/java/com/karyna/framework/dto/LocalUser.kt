@@ -5,8 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity
-data class User(
+@Entity(tableName = "user")
+data class LocalUser(
     @PrimaryKey
     @ColumnInfo(name = "id")
     @SerializedName("id")
@@ -22,5 +22,5 @@ data class User(
     val avatarUrl: String,
     @ColumnInfo(name = "weight")
     @SerializedName("weight")
-    val weight: String?
+    val weight: Float?
 )

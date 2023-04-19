@@ -9,7 +9,6 @@ import androidx.core.app.NotificationCompat
 import com.karyna.core.data.Result
 import com.karyna.core.data.RunningRepository
 import com.karyna.core.domain.LatLng
-import com.karyna.core.domain.User
 import com.karyna.core.domain.run.RunInput
 import com.karyna.feature.core.utils.StringFormatter
 import com.karyna.feature.core.utils.utils.DateUtils.toIsoDate
@@ -28,6 +27,8 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.OffsetDateTime
 import javax.inject.Inject
+import javax.inject.Named
+import kotlin.math.roundToInt
 import com.karyna.feature.core.R as RCore
 
 @AndroidEntryPoint
@@ -37,7 +38,8 @@ class RunningForegroundService : Service() {
     lateinit var repository: RunningRepository
 
     @Inject
-    lateinit var user: User
+    @Named("userId")
+    lateinit var userId: String
 
     private val scope by lazy { CoroutineScope(Dispatchers.Default) }
     var timerJob: Job? = null
@@ -109,7 +111,7 @@ class RunningForegroundService : Service() {
         )
         createNotificationChannel()
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Run")
+            .setContentTitle("Run in progress")
             .setContentText("")
             .setSmallIcon(RCore.drawable.ic_baseline_person_24)
             .setContentIntent(pendingIntent)
@@ -141,9 +143,13 @@ class RunningForegroundService : Service() {
 
     private suspend fun saveRun() =
         with(_uiState.value) {
-            val locationShort =
+            val userResult = repository.getUser(userId)
+            val locationShortResult =
                 repository.getLocationShort(userPath.first().run { LatLng(latitude, longitude) })
-            (locationShort as? Result.Success)?.value?.let { location ->
+            if (userResult is Result.Success && locationShortResult is Result.Success) {
+                val user = userResult.value
+                val location = locationShortResult.value
+
                 val result = repository.saveRun(
                     RunInput(
                         userId = user.id,
@@ -155,8 +161,7 @@ class RunningForegroundService : Service() {
                         durationS = runDurationS,
                         distanceMeters = distanceM,
                         paceMetersInS = if (runDurationS <= 0) 0 else (distanceM / runDurationS).toInt(),
-                        //todo calories
-                        calories = null
+                        calories = user.weight?.let { calculateKCaloriesBurned(it, distanceM) }
                     )
                 )
                 if (result is Result.Failure) {
@@ -164,6 +169,11 @@ class RunningForegroundService : Service() {
                 }
             }
         }
+
+
+    private fun calculateKCaloriesBurned(weight: Float, distanceM: Int): Int {
+        return ((distanceM / 1000f) * weight).roundToInt()
+    }
 
     companion object {
         private const val CHANNEL_ID = "CHANNEL_ID"

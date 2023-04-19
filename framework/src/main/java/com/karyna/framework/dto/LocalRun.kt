@@ -8,7 +8,7 @@ import com.karyna.core.domain.LocationShort
 @Entity(
     tableName = "run",
     foreignKeys = [ForeignKey(
-        entity = User::class,
+        entity = LocalUser::class,
         parentColumns = ["id"],
         childColumns = ["userId"],
         onDelete = ForeignKey.CASCADE
