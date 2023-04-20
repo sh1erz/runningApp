@@ -11,12 +11,10 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.karyna.core.domain.run.Run
 import com.karyna.feature.core.utils.base.BaseFragment
+import com.karyna.feature.core.utils.utils.extensions.color
 import com.karyna.feature.core.utils.utils.extensions.string
 import com.karyna.feature.personal.PersonalViewModel
 import com.karyna.feature.personal.R
@@ -59,7 +57,12 @@ class RunDetailsFragment : BaseFragment<FragmentRunDetailsBinding, PersonalViewM
     }
 
     private fun drawRoute(locations: List<LatLng>) {
-        val polylineOptions = PolylineOptions()
+        val polylineOptions = PolylineOptions().apply {
+            color(binding.color(RCore.color.secondary900))
+            width(POLYLINE_STROKE_WIDTH_PX)
+            startCap(ButtCap())
+            endCap(RoundCap())
+        }
         googleMap.clear()
 
         polylineOptions.points.addAll(locations)
@@ -74,7 +77,9 @@ class RunDetailsFragment : BaseFragment<FragmentRunDetailsBinding, PersonalViewM
             builder.include(latLng)
         }
         googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), POLYLINE_PADDING))
-        //googleMap.moveCamera(CameraUpdateFactory.zoomTo(18F))
+        if (polyline.points.any { !googleMap.projection.visibleRegion.latLngBounds.contains(it) }) {
+            googleMap.moveCamera(CameraUpdateFactory.zoomOut())
+        }
     }
 
     private fun showRunData(run: Run) = with(binding) {
@@ -91,6 +96,7 @@ class RunDetailsFragment : BaseFragment<FragmentRunDetailsBinding, PersonalViewM
     }
 
     private companion object {
-        const val POLYLINE_PADDING = 24
+        const val POLYLINE_PADDING = 0
+        const val POLYLINE_STROKE_WIDTH_PX = 12f
     }
 }

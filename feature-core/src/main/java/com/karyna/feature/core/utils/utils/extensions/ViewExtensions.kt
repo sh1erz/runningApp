@@ -17,3 +17,4 @@ fun ImageView.showImage(image: String?, options: RequestOptions) {
 }
 
 fun ViewBinding.string(resInt: Int, vararg params: Any) = root.context.getString(resInt, *params)
+fun ViewBinding.color(resInt: Int) = root.context.getColor(resInt)

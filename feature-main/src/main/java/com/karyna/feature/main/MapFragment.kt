@@ -24,7 +24,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.RoundCap
 import com.karyna.feature.core.utils.base.BaseFragment
+import com.karyna.feature.core.utils.utils.extensions.color
 import com.karyna.feature.main.databinding.FragmentMapBinding
 import com.karyna.feature.main.map.PermissionsManager
 import com.karyna.feature.main.map.RunUiInfo
@@ -33,6 +35,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
+import com.karyna.feature.core.R as RCore
 
 class MapFragment : BaseFragment<FragmentMapBinding, MapViewModel>(), OnMapReadyCallback {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentMapBinding =
@@ -159,14 +162,17 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapViewModel>(), OnMapReady
     }
 
     private fun drawRoute(locations: List<LatLng>) {
-        val polylineOptions = PolylineOptions()
-        //todo: map: too much overdraws
+        val polylineOptions = PolylineOptions().apply {
+            color(binding.color(RCore.color.secondary900))
+            width(POLYLINE_STROKE_WIDTH_PX)
+            startCap(RoundCap())
+            endCap(RoundCap())
+        }
+        //todo: map: handle overdraws
 
         googleMap.clear()
 
-        val points = polylineOptions.points
-        points.addAll(locations)
-
+        polylineOptions.points.addAll(locations)
         googleMap.addPolyline(polylineOptions)
     }
 
@@ -205,5 +211,6 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapViewModel>(), OnMapReady
     private companion object {
         const val MAP_ZOOM = 18f
         const val MIN_MAP_ZOOM = 16f
+        const val POLYLINE_STROKE_WIDTH_PX = 14f
     }
 }
