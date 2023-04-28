@@ -30,13 +30,19 @@ class LocationProvider(private val context: Context) {
 
             if (lastLocation != null) {
                 val lastLocationDifference = SphericalUtil.computeDistanceBetween(lastLocation, latLng).roundToInt()
-                distance += lastLocationDifference
-                liveDistance.value = distance
-                //calculate pace
+                // calculate pace
                 val newTimeMs = System.currentTimeMillis()
                 val timeDifferenceS = (newTimeMs - timeSinceLastUpdateMs) / 1000.0
-                livePace.value = (lastLocationDifference / timeDifferenceS).toInt()
+                val paceMS = lastLocationDifference / timeDifferenceS.toFloat()
 
+                if (paceMS > MAX_HUMAN_SPEED) {
+                    // if speed is not normal - skip values update
+                    return
+                }
+
+                livePace.value = paceMS
+                distance += lastLocationDifference
+                liveDistance.value = distance
             }
             if (latLng != locations.lastOrNull()) {
                 locations.add(latLng)
@@ -55,7 +61,7 @@ class LocationProvider(private val context: Context) {
     val liveLocation = MutableLiveData<LatLng>()
     val liveLocations = MutableLiveData<List<LatLng>>()
     val liveDistance = MutableLiveData<Int>()
-    val livePace = MutableLiveData<Int>()
+    val livePace = MutableLiveData<Float>()
 
     //4
     @SuppressLint("MissingPermission")
@@ -97,5 +103,8 @@ class LocationProvider(private val context: Context) {
         }
     }
 
+    private companion object {
+        const val MAX_HUMAN_SPEED = 12
+    }
 
 }
