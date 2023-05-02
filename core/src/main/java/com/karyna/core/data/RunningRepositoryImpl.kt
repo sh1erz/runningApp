@@ -33,16 +33,26 @@ class RunningRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    override suspend fun setWeight(userId: String, weight: Float?): Result<Unit> = withContext(Dispatchers.IO) {
+        val response = remoteUserDataSource.setWeight(userId, weight)
+        val localResult = localUserDataSource.setWeight(userId, weight)
+        if (response.isSuccess && localResult.isSuccess) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception())
+        }
+    }
+
     override suspend fun getRuns(userId: String): Result<List<Run>> = withContext(Dispatchers.IO) {
         val response = remoteRunDataSource.getRuns(userId)
-        if (response is Result.Failure) {
+        if (response.isFailure) {
             localRunDataSource.getRuns(userId)
         } else response
     }
 
     override suspend fun getUser(userId: String): Result<User> = withContext(Dispatchers.IO) {
         val result = remoteUserDataSource.getUser(userId)
-        if (result is Result.Success) {
+        if (result.isSuccess) {
             result
         } else localUserDataSource.getUser(userId)
     }
@@ -60,10 +70,10 @@ class RunningRepositoryImpl @Inject constructor(
         runInput: RunInput
     ): Result<Unit> = withContext(Dispatchers.IO) {
         val result = remoteRunDataSource.saveRun(runInput)
-        if (result is Result.Success) {
-            localRunDataSource.saveRun(result.value, runInput)
+        if (result.isSuccess) {
+            localRunDataSource.saveRun(result.getOrThrow(), runInput)
         } else {
-            Result.Failure((result as? Result.Failure)?.throwable)
+            Result.failure(result.exceptionOrNull() ?: Exception())
         }
     }
 

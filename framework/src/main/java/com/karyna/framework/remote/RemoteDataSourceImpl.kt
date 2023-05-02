@@ -1,10 +1,8 @@
 package com.karyna.framework.remote
 
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.karyna.core.data.Result
 import com.karyna.core.data.datasources.RemoteRunDataSource
 import com.karyna.core.data.datasources.RemoteUserDataSource
 import com.karyna.core.domain.LatLng
@@ -31,10 +29,10 @@ class RemoteDataSourceImpl @Inject constructor(private val googleMapsGeoApi: Rem
     override suspend fun getUser(userId: String): Result<User> = try {
         val remoteUser = db.collection(USERS_COLLECTION).whereEqualTo("id", userId).get()
             .await().toObjects(RemoteUser::class.java).first()
-        Result.Success(remoteUserToDomain(remoteUser))
+        Result.success(remoteUserToDomain(remoteUser))
     } catch (ex: Exception) {
         Timber.e(ex)
-        Result.Failure(ex)
+        Result.failure(ex)
     }
 
     override suspend fun addUser(user: User) {
@@ -50,13 +48,21 @@ class RemoteDataSourceImpl @Inject constructor(private val googleMapsGeoApi: Rem
 
     }
 
+    override suspend fun setWeight(userId: String, weight: Float?): Result<Unit> = try {
+        db.collection(USERS_COLLECTION).document(userId).update("weight", weight).await()
+        Result.success(Unit)
+    } catch (ex: Exception) {
+        Timber.e(ex)
+        Result.failure(ex)
+    }
+
     override suspend fun getRun(id: String): Result<Run> = try {
         val runInput = db.collection(RUNS_COLLECTION).document(id).get().await().toObject(RemoteRun::class.java)
-        runInput?.let { Result.Success(remoteRunInputToDomain(id, it)) }
-            ?: Result.Failure(NullPointerException("RunInput for document $id was null"))
-    } catch (ex: FirebaseFirestoreException) {
+        runInput?.let { Result.success(remoteRunInputToDomain(id, it)) }
+            ?: Result.failure(NullPointerException("RunInput for document $id was null"))
+    } catch (ex: Exception) {
         Timber.e(ex)
-        Result.Failure(ex)
+        Result.failure(ex)
     }
 
     override suspend fun getRuns(userId: String): Result<List<Run>> = try {
@@ -65,10 +71,10 @@ class RemoteDataSourceImpl @Inject constructor(private val googleMapsGeoApi: Rem
         val ids = query.documents.map { it.id }
         val remoteRuns = query.toObjects(RemoteRun::class.java)
         val runs = ids.zip(remoteRuns).map { remoteRunInputToDomain(it.first, it.second) }
-        Result.Success(runs)
-    } catch (ex: FirebaseFirestoreException) {
+        Result.success(runs)
+    } catch (ex: Exception) {
         Timber.e(ex)
-        Result.Failure(ex)
+        Result.failure(ex)
     }
 
     override suspend fun getTopRuns(
@@ -90,19 +96,19 @@ class RemoteDataSourceImpl @Inject constructor(private val googleMapsGeoApi: Rem
             OrderingMode.BY_DISTANCE -> runs.sortedByDescending { it.distanceMeters }
             OrderingMode.BY_DURATION -> runs.sortedByDescending { it.durationS }
         }
-        Result.Success(orderedRuns.take(amount))
+        Result.success(orderedRuns.take(amount))
     } catch (ex: Exception) {
         Timber.e(ex)
-        Result.Failure(ex)
+        Result.failure(ex)
     }
 
     override suspend fun saveRun(runInput: RunInput): Result<String> = try {
         val remoteRunInput = runInputToDto(runInput)
         val docId = db.collection(RUNS_COLLECTION).add(remoteRunInput).await().id
-        Result.Success(docId)
-    } catch (ex: FirebaseFirestoreException) {
+        Result.success(docId)
+    } catch (ex: Exception) {
         Timber.e(ex)
-        Result.Failure(ex)
+        Result.failure(ex)
     }
 
     override suspend fun getLocationShort(latLng: LatLng): Result<LocationShort> = try {
@@ -111,10 +117,10 @@ class RemoteDataSourceImpl @Inject constructor(private val googleMapsGeoApi: Rem
             location.results.first { it.types.contains("locality") }.address_components.first { it.types.contains("locality") }.long_name
         val country =
             location.results.first { it.types.contains("country") }.address_components.first { it.types.contains("country") }.long_name
-        Result.Success(LocationShort(country = country, city = city))
+        Result.success(LocationShort(country = country, city = city))
     } catch (ex: Exception) {
         Timber.e(ex)
-        Result.Failure()
+        Result.failure(ex)
     }
 
     private fun getGeocodingUrl(latLng: LatLng) =

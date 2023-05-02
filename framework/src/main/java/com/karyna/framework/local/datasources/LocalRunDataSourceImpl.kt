@@ -1,7 +1,6 @@
 package com.karyna.framework.local.datasources
 
 import android.database.sqlite.SQLiteException
-import com.karyna.core.data.Result
 import com.karyna.core.data.datasources.LocalRunDataSource
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunInput
@@ -17,19 +16,19 @@ class LocalRunDataSourceImpl @Inject constructor(private val runDao: RunDao) :
     override suspend fun getRun(id: Long): Result<Run?> = try {
         val run = runDao.getRun(id)
         if (run != null) {
-            Result.Success(runToDomain(run))
+            Result.success(runToDomain(run))
         } else {
-            Result.Failure(EntryDoesNotExists())
+            Result.failure(EntryDoesNotExists())
         }
     } catch (ex: SQLiteException) {
-        Result.Failure(ex)
+        Result.failure(ex)
     }
 
     override suspend fun getRuns(userId: String): Result<List<Run>> = try {
         val runs = runDao.getRuns(userId)
-        Result.Success(runs.map { runToDomain(it) })
+        Result.success(runs.map { runToDomain(it) })
     } catch (ex: SQLiteException) {
-        Result.Failure(ex)
+        Result.failure(ex)
     }
 
     override suspend fun saveRun(
@@ -37,10 +36,10 @@ class LocalRunDataSourceImpl @Inject constructor(private val runDao: RunDao) :
         runInput: RunInput
     ): Result<Unit> = try {
         runDao.insertRun(runInputToRun(id, runInput))
-        Result.Success(Unit)
+        Result.success(Unit)
     } catch (ex: SQLiteException) {
         Timber.e(ex)
-        Result.Failure(ex)
+        Result.failure(ex)
     }
 
     override suspend fun deleteRun(runId: String): Result<Unit> {

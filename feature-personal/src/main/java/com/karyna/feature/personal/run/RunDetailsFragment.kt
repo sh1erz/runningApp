@@ -58,7 +58,7 @@ class RunDetailsFragment : BaseFragment<FragmentRunDetailsBinding, PersonalViewM
 
     private fun drawRoute(locations: List<LatLng>) {
         val polylineOptions = PolylineOptions().apply {
-            color(binding.color(RCore.color.secondary900))
+            color(binding.color(RCore.color.primary700))
             width(POLYLINE_STROKE_WIDTH_PX)
             startCap(ButtCap())
             endCap(RoundCap())

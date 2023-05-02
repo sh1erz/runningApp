@@ -10,4 +10,8 @@
     <string name="distance_formatted">Distance: %s</string>
     <string name="pace_formatted">Average pace: %s m/s</string>
     <string name="calories_formatted">Calories burned: %d kCal</string>
+    <string name="change_weight">Change weight:</string>
+    <string name="sign_out">Sign out</string>
+    <string name="formatted_weight">%.1f kg</string>
+    <string name="save">Save</string>
 </resources>

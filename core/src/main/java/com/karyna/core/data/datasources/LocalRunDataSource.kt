@@ -1,6 +1,5 @@
 package com.karyna.core.data.datasources
 
-import com.karyna.core.data.Result
 import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunInput
 

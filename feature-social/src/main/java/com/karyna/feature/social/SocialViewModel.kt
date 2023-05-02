@@ -53,8 +53,8 @@ class SocialViewModel @Inject constructor(private val repository: RunningReposit
                 isoDateFrom = dateRange.first.toIsoDate(),
                 isoDateToExcl = dateRange.second.toIsoDate()
             )
-            if (topRuns is com.karyna.core.data.Result.Success) {
-                _topRuns.postValue(requireNotNull(topRuns.value))
+            if (topRuns.isSuccess) {
+                _topRuns.value = topRuns.getOrThrow()
             }
         }
     }

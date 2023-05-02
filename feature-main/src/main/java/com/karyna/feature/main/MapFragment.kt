@@ -163,7 +163,7 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapViewModel>(), OnMapReady
 
     private fun drawRoute(locations: List<LatLng>) {
         val polylineOptions = PolylineOptions().apply {
-            color(binding.color(RCore.color.secondary900))
+            color(binding.color(RCore.color.primary700))
             width(POLYLINE_STROKE_WIDTH_PX)
             startCap(RoundCap())
             endCap(RoundCap())

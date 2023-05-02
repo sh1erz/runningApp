@@ -13,6 +13,7 @@ interface RunningRepository {
 
     //PERSONAL
     suspend fun getRun(userId: String): Result<Run>
+    suspend fun setWeight(userId: String, weight: Float?): Result<Unit>
 
     //todo pagination, filtration
     suspend fun getRuns(userId: String): Result<List<Run>>

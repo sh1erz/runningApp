@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.karyna.feature.personal.run.RunDetailsFragment
 import com.karyna.runningapp.auth.AuthFragment
 import com.karyna.runningapp.auth.AuthFragmentDirections
 import com.karyna.runningapp.databinding.ActivityNavHostBinding
@@ -62,7 +63,7 @@ class NavHostActivity : AppCompatActivity() {
             FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentViewCreated(fm: FragmentManager, f: Fragment, v: View, savedInstanceState: Bundle?) {
                 binding.bottomNavView.isVisible = when (f) {
-                    is AuthFragment -> false
+                    is AuthFragment, is RunDetailsFragment -> false
                     else -> true
                 }
             }

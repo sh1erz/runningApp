@@ -8,5 +8,4 @@
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="specify_weight_optional">Specify weight (Optional)</string>
     <string name="weight_description">Knowing your weight helps to calculate calories burned by trainings.</string>
-    <string name="enter_your_weight">Enter your weight</string>
 </resources>

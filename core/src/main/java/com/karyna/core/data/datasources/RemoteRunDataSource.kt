@@ -1,6 +1,5 @@
 package com.karyna.core.data.datasources
 
-import com.karyna.core.data.Result
 import com.karyna.core.domain.LatLng
 import com.karyna.core.domain.LocationShort
 import com.karyna.core.domain.run.OrderingMode

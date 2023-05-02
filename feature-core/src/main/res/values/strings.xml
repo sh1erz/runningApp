@@ -3,4 +3,5 @@
     <string name="important_notifications">Important notifications</string>
     <string name="n_meters">%d meters</string>
     <string name="format_meters_in_second">%.2f m/s</string>
+    <string name="enter_your_weight">Enter your weight</string>
 </resources>

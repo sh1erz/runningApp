@@ -14,4 +14,7 @@ interface UserDao {
 
     @Delete
     fun deleteUser(user: LocalUser)
+
+    @Query("UPDATE user SET weight = :weight WHERE id LIKE '%' || :id || '%'")
+    fun updateWeight(id: String, weight: Float?)
 }

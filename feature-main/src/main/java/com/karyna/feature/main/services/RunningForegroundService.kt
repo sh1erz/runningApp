@@ -6,7 +6,6 @@ import android.os.Binder
 import android.os.IBinder
 import android.text.format.DateUtils
 import androidx.core.app.NotificationCompat
-import com.karyna.core.data.Result
 import com.karyna.core.data.RunningRepository
 import com.karyna.core.domain.LatLng
 import com.karyna.core.domain.run.RunInput
@@ -146,9 +145,9 @@ class RunningForegroundService : Service() {
             val userResult = repository.getUser(userId)
             val locationShortResult =
                 repository.getLocationShort(userPath.first().run { LatLng(latitude, longitude) })
-            if (userResult is Result.Success && locationShortResult is Result.Success) {
-                val user = userResult.value
-                val location = locationShortResult.value
+            if (userResult.isSuccess && locationShortResult.isSuccess) {
+                val user = userResult.getOrThrow()
+                val location = locationShortResult.getOrThrow()
 
                 val result = repository.saveRun(
                     RunInput(
@@ -164,8 +163,8 @@ class RunningForegroundService : Service() {
                         calories = user.weight?.let { calculateKCaloriesBurned(it, distanceM) }
                     )
                 )
-                if (result is Result.Failure) {
-                    Timber.e(result.throwable)
+                if (result.isFailure) {
+                    Timber.e(result.exceptionOrNull())
                 }
             }
         }

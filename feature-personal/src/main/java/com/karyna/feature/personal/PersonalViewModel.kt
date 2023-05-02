@@ -29,13 +29,13 @@ class PersonalViewModel @Inject constructor(
 
     fun loadListInfo() {
         viewModelScope.launch {
-            val user = (repository.getUser(userId) as? com.karyna.core.data.Result.Success)?.value ?: return@launch
+            val user = repository.getUser(userId).getOrNull() ?: return@launch
             val userItem = PersonalItem(PersonalItemType.USER, user)
             val items = mutableListOf(userItem)
             val runs = repository.getRuns(userId)
-            if (runs is com.karyna.core.data.Result.Success) {
+            if (runs.isSuccess) {
                 items.add(PersonalItem(PersonalItemType.LIST_TITLE, StringFormatter.from(R.string.your_runs)))
-                items.addAll(runs.value.map { PersonalItem(PersonalItemType.RUN_ITEM, it) })
+                items.addAll(runs.getOrThrow().map { PersonalItem(PersonalItemType.RUN_ITEM, it) })
             }
             _personalItems.value = items
         }
