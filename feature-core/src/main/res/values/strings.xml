@@ -2,6 +2,9 @@
 <resources>
     <string name="important_notifications">Important notifications</string>
     <string name="n_meters">%d meters</string>
-    <string name="format_meters_in_second">%.2f m/s</string>
+    <string name="format_min_per_km">%.2f min/km</string>
     <string name="enter_your_weight">Enter your weight</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="changes_accepted">Changes accepted</string>
+    <string name="retry">Retry</string>
 </resources>

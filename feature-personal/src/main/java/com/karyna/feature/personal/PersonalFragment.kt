@@ -17,7 +17,12 @@ class PersonalFragment : BaseFragment<FragmentPersonalBinding, PersonalViewModel
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentPersonalBinding =
         { layoutInflater, viewGroup, b -> FragmentPersonalBinding.inflate(layoutInflater, viewGroup, b) }
     override val viewModel: PersonalViewModel by navGraphViewModels(R.id.personal_nav_graph) { defaultViewModelProviderFactory }
-    private val adapter by lazy { PersonalAdapter({}, onRunClick = viewModel::navigateToRunDetails) }
+    private val adapter by lazy {
+        PersonalAdapter(
+            onSettingsClick = viewModel::navigateToSettings,
+            onRunClick = viewModel::navigateToRunDetails
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

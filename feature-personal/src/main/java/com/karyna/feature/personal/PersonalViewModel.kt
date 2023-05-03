@@ -46,4 +46,8 @@ class PersonalViewModel @Inject constructor(
         navigate(PersonalFragmentDirections.actionPersonalToRunDetails())
     }
 
+    fun navigateToSettings() {
+        navigate(PersonalFragmentDirections.actionPersonalToSettings())
+    }
+
 }

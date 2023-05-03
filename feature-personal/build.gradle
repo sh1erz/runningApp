@@ -39,4 +39,5 @@ android {
 dependencies {
     featureDeps()
     gms()
+    auth()
 }

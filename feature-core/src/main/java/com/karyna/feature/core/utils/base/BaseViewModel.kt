@@ -8,6 +8,7 @@ import com.karyna.feature.core.utils.navigation.NavigationCommand
 abstract class BaseViewModel : ViewModel() {
 
     val navigation: SingleLiveEvent<NavigationCommand> = SingleLiveEvent()
+    val snackBarMsg: SingleLiveEvent<SnackBarInfo> = SingleLiveEvent()
 
     fun navigate(navDirections: NavDirections) {
         navigation.value = NavigationCommand.ToDirection(navDirections)

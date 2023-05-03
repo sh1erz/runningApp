@@ -94,7 +94,7 @@ class RunningForegroundService : Service() {
         }
         livePace.observeForever { pace ->
             _uiState.update {
-                _uiState.value.copy(formattedPace = StringFormatter.from(RCore.string.format_meters_in_second, pace))
+                _uiState.value.copy(formattedPace = StringFormatter.from(RCore.string.format_min_per_km, pace))
             }
         }
     }

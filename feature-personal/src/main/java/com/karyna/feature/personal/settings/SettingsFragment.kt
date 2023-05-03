@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import com.karyna.feature.core.utils.base.BaseFragment
-import com.karyna.feature.personal.R
 import com.karyna.feature.personal.databinding.FragmentSettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,15 +23,16 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, SettingsViewModel
         viewModel.loadSettingsInfo()
         setupListeners()
         viewModel.initWeight.observe(viewLifecycleOwner) {
-            binding.etWeightSetting.setText(
-                getString(R.string.formatted_weight, it)
-            )
+            it?.let { binding.etWeightSetting.setText(it.toString()) }
         }
     }
 
-    fun setupListeners() = with(binding) {
+    private fun setupListeners() = with(binding) {
         etWeightSetting.addTextChangedListener(afterTextChanged = {
             viewModel.setWeight(it?.toString())
         })
+        ivBack.setOnClickListener { viewModel.navigateBack() }
+        btnSave.setOnClickListener { viewModel.saveWeight() }
+        btnSignOut.setOnClickListener { viewModel.signOut() }
     }
 }

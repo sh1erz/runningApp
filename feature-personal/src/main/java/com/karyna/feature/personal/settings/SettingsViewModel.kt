@@ -1,13 +1,18 @@
 package com.karyna.feature.personal.settings
 
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.karyna.core.data.RunningRepository
 import com.karyna.feature.core.utils.SingleLiveEvent
+import com.karyna.feature.core.utils.StringFormatter
 import com.karyna.feature.core.utils.base.BaseViewModel
+import com.karyna.feature.core.utils.base.SnackBarInfo
+import com.karyna.feature.personal.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
+import com.karyna.feature.core.R as RCore
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -31,6 +36,29 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun saveWeight() {
-        viewModelScope.launch { repository.setWeight(userId, inputWeight?.toFloatOrNull()) }
+        viewModelScope.launch {
+            try {
+                val weight = inputWeight?.run { if (isEmpty()) null else trim().toFloat() }
+                val result = repository.setWeight(userId, weight)
+                if (result.isFailure) {
+                    snackBarMsg.value = SnackBarInfo(
+                        StringFormatter.from(RCore.string.something_went_wrong),
+                        isPositive = false,
+                        actionTitle = StringFormatter.from(RCore.string.retry),
+                        action = { setWeight(inputWeight) })
+                } else {
+                    snackBarMsg.value = SnackBarInfo(
+                        StringFormatter.from(RCore.string.changes_accepted),
+                        isPositive = true
+                    )
+                }
+            } catch (ex: NumberFormatException) {
+                snackBarMsg.value = SnackBarInfo(StringFormatter.from(R.string.incorrect_value), isPositive = false)
+            }
+        }
+    }
+
+    fun signOut() {
+        FirebaseAuth.getInstance().signOut()
     }
 }
