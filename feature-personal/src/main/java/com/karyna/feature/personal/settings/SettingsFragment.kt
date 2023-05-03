@@ -25,6 +25,9 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, SettingsViewModel
         viewModel.initWeight.observe(viewLifecycleOwner) {
             it?.let { binding.etWeightSetting.setText(it.toString()) }
         }
+        viewModel.isSaveEnabled.observe(viewLifecycleOwner) {
+            binding.btnSave.isEnabled = it
+        }
     }
 
     private fun setupListeners() = with(binding) {

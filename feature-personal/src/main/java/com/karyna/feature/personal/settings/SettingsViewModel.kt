@@ -1,5 +1,7 @@
 package com.karyna.feature.personal.settings
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.karyna.core.data.RunningRepository
@@ -20,6 +22,8 @@ class SettingsViewModel @Inject constructor(
     @Named("userId") private val userId: String
 ) : BaseViewModel() {
     val initWeight = SingleLiveEvent<Float?>()
+    val isSaveEnabled: LiveData<Boolean> get() = _isSaveEnabled
+    private val _isSaveEnabled = MutableLiveData<Boolean>()
     private var inputWeight: String? = null
 
     fun loadSettingsInfo() {
@@ -33,6 +37,7 @@ class SettingsViewModel @Inject constructor(
 
     fun setWeight(input: String?) {
         inputWeight = input
+        _isSaveEnabled.value = initWeight.value != input?.toFloatOrNull()
     }
 
     fun saveWeight() {
