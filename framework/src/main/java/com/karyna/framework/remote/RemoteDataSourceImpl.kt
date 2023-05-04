@@ -111,6 +111,14 @@ class RemoteDataSourceImpl @Inject constructor(private val googleMapsGeoApi: Rem
         Result.failure(ex)
     }
 
+    override suspend fun deleteRun(runId: String): Result<Unit> = try {
+        db.collection(RUNS_COLLECTION).document(runId).delete().await()
+        Result.success(Unit)
+    } catch (ex: Exception) {
+        Timber.e(ex)
+        Result.failure(ex)
+    }
+
     override suspend fun getLocationShort(latLng: LatLng): Result<LocationShort> = try {
         val location = googleMapsGeoApi.getLocation(getGeocodingUrl(latLng))
         val city =

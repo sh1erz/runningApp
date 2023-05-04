@@ -29,10 +29,6 @@ class RunningRepositoryImpl @Inject constructor(
         localUserDataSource.addUser(user)
     }
 
-    override suspend fun getRun(userId: String): Result<Run> = withContext(Dispatchers.IO) {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun setWeight(userId: String, weight: Float?): Result<Unit> = withContext(Dispatchers.IO) {
         val response = remoteUserDataSource.setWeight(userId, weight)
         val localResult = localUserDataSource.setWeight(userId, weight)
@@ -48,6 +44,14 @@ class RunningRepositoryImpl @Inject constructor(
         if (response.isFailure) {
             localRunDataSource.getRuns(userId)
         } else response
+    }
+
+    override suspend fun deleteRun(runId: String): Result<Unit> = withContext(Dispatchers.IO) {
+        val remoteResult = remoteRunDataSource.deleteRun(runId)
+        val localResult = localRunDataSource.deleteRun(runId)
+        if (remoteResult.isFailure || localResult.isFailure) {
+            Result.failure(remoteResult.exceptionOrNull() ?: localResult.exceptionOrNull() ?: Exception())
+        } else remoteResult
     }
 
     override suspend fun getUser(userId: String): Result<User> = withContext(Dispatchers.IO) {

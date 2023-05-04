@@ -12,11 +12,12 @@ interface RunningRepository {
     suspend fun addUser(user: User, addToRemote: Boolean): Result<Unit>
 
     //PERSONAL
-    suspend fun getRun(userId: String): Result<Run>
-    suspend fun setWeight(userId: String, weight: Float?): Result<Unit>
-
     //todo pagination, filtration
     suspend fun getRuns(userId: String): Result<List<Run>>
+
+    suspend fun deleteRun(runId: String): Result<Unit>
+
+    suspend fun setWeight(userId: String, weight: Float?): Result<Unit>
 
     //SOCIAL
     suspend fun getUser(userId: String): Result<User>

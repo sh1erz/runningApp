@@ -48,6 +48,7 @@ class RunDetailsFragment : BaseFragment<FragmentRunDetailsBinding, PersonalViewM
     private fun setupListeners() {
         with(binding) {
             ivBack.setOnClickListener { viewModel.navigateBack() }
+            ivDeleteRun.setOnClickListener { viewModel.deleteRun() }
         }
     }
 

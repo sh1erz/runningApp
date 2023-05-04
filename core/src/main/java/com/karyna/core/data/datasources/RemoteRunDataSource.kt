@@ -17,6 +17,6 @@ interface RemoteRunDataSource {
     ): Result<List<Run>>
 
     suspend fun saveRun(runInput: RunInput): Result<String>
+    suspend fun deleteRun(runId: String): Result<Unit>
     suspend fun getLocationShort(latLng: LatLng): Result<LocationShort>
-//    fun deleteRun(runId: String): Result<Unit>
 }

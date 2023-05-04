@@ -7,12 +7,14 @@ import com.karyna.core.data.RunningRepository
 import com.karyna.core.domain.run.Run
 import com.karyna.feature.core.utils.StringFormatter
 import com.karyna.feature.core.utils.base.BaseViewModel
+import com.karyna.feature.core.utils.base.SnackBarInfo
 import com.karyna.feature.personal.list.PersonalItem
 import com.karyna.feature.personal.list.PersonalItemType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
+import com.karyna.feature.core.R as RCore
 
 @HiltViewModel
 class PersonalViewModel @Inject constructor(
@@ -38,6 +40,28 @@ class PersonalViewModel @Inject constructor(
                 items.addAll(runs.getOrThrow().map { PersonalItem(PersonalItemType.RUN_ITEM, it) })
             }
             _personalItems.value = items
+        }
+    }
+
+    fun deleteRun() {
+        viewModelScope.launch {
+            chosenRun?.let {
+                val result = repository.deleteRun(it.id)
+                if (result.isSuccess) {
+                    snackBarMsg.value = SnackBarInfo(
+                        message = StringFormatter.from(RCore.string.changes_accepted),
+                        isPositive = true
+                    )
+                    navigateBack()
+                } else {
+                    snackBarMsg.value = SnackBarInfo(
+                        StringFormatter.from(RCore.string.something_went_wrong),
+                        isPositive = false,
+                        actionTitle = StringFormatter.from(RCore.string.retry),
+                        action = { deleteRun() }
+                    )
+                }
+            }
         }
     }
 

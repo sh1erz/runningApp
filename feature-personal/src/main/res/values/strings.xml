@@ -3,12 +3,13 @@
     <string name="settings">Settings</string>
     <string name="your_runs">Your runs</string>
     <string name="back">Back</string>
+    <string name="delete">Delete</string>
     <string name="map">Map</string>
     <string name="run_details">Run details</string>
     <string name="location_formatted">%s, %s</string>
     <string name="duration_formatted">Duration: %s</string>
     <string name="distance_formatted">Distance: %s</string>
-    <string name="pace_formatted">Average pace: %s m/s</string>
+    <string name="pace_formatted">Average pace: %.2f min/km</string>
     <string name="calories_formatted">Calories burned: %d kCal</string>
     <string name="change_weight">Change weight:</string>
     <string name="sign_out">Sign out</string>
