@@ -15,7 +15,7 @@ import com.karyna.feature.core.utils.utils.extensions.color
 
 abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
 
-    abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
+    protected abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
     private var _binding: ViewBinding? = null
 
     protected abstract val viewModel: VM
