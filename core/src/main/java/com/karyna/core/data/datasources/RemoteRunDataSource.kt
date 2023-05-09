@@ -7,7 +7,6 @@ import com.karyna.core.domain.run.Run
 import com.karyna.core.domain.run.RunInput
 
 interface RemoteRunDataSource {
-    suspend fun getRun(id: String): Result<Run>
     suspend fun getRuns(userId: String): Result<List<Run>>
     suspend fun getTopRuns(
         amount: Int,

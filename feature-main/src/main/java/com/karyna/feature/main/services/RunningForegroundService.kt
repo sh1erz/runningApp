@@ -8,6 +8,7 @@ import android.text.format.DateUtils
 import androidx.core.app.NotificationCompat
 import com.karyna.core.data.RunningRepository
 import com.karyna.core.domain.LatLng
+import com.karyna.core.domain.User
 import com.karyna.core.domain.run.RunInput
 import com.karyna.feature.core.utils.StringFormatter
 import com.karyna.feature.core.utils.utils.DateUtils.toIsoDate
@@ -41,14 +42,15 @@ class RunningForegroundService : Service() {
     lateinit var userId: String
 
     private val scope by lazy { CoroutineScope(Dispatchers.Default) }
-    var timerJob: Job? = null
+    private var timerJob: Job? = null
 
     private val _uiState = MutableStateFlow(RunUiInfo.EMPTY)
     val uiState: StateFlow<RunUiInfo> = _uiState
 
     private var runDurationS: Long = 0
     private var distanceM: Int = 0
-    private var date = OffsetDateTime.now()
+    private val date = OffsetDateTime.now()
+    private var user: User? = null
 
     private val binder = RunningBinder()
     private val locationProvider by lazy { LocationProvider(this) }
@@ -61,6 +63,9 @@ class RunningForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(1, createNotification())
+        scope.launch {
+            user = repository.getUser(userId).getOrNull()
+        }
         observeLocation()
         startTimer()
         return START_NOT_STICKY
@@ -89,7 +94,12 @@ class RunningForegroundService : Service() {
         liveDistance.observeForever { distance ->
             distanceM = distance
             _uiState.update {
-                _uiState.value.copy(formattedDistance = StringFormatter.from(RCore.string.n_meters, distance))
+                _uiState.value.copy(
+                    formattedDistance = StringFormatter.from(RCore.string.n_meters, distance),
+                    caloriesBurned = user?.weight?.let {
+                        StringFormatter.from(RCore.string.format_calories, calculateKCaloriesBurned(it, distance))
+                    }
+                )
             }
         }
         livePace.observeForever { pace ->
@@ -142,6 +152,7 @@ class RunningForegroundService : Service() {
 
     private suspend fun saveRun() =
         with(_uiState.value) {
+            if (userPath.isEmpty()) return@with
             val userResult = repository.getUser(userId)
             val locationShortResult =
                 repository.getLocationShort(userPath.first().run { LatLng(latitude, longitude) })

@@ -56,15 +56,6 @@ class RemoteDataSourceImpl @Inject constructor(private val googleMapsGeoApi: Rem
         Result.failure(ex)
     }
 
-    override suspend fun getRun(id: String): Result<Run> = try {
-        val runInput = db.collection(RUNS_COLLECTION).document(id).get().await().toObject(RemoteRun::class.java)
-        runInput?.let { Result.success(remoteRunInputToDomain(id, it)) }
-            ?: Result.failure(NullPointerException("RunInput for document $id was null"))
-    } catch (ex: Exception) {
-        Timber.e(ex)
-        Result.failure(ex)
-    }
-
     override suspend fun getRuns(userId: String): Result<List<Run>> = try {
         val query = db.collection(RUNS_COLLECTION).whereEqualTo("userId", userId)
             .orderBy(DATE_FIELD, Query.Direction.DESCENDING).get().await()
